@@ -2,11 +2,16 @@ import express, { Express, NextFunction, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import Content from './src/models/content/content.schema';
+import passport from "passport";
+import { initPassport } from './initPassport';
 
 dotenv.config();
 
 const app: Express = express();
 const port = 3000;
+
+//init passport
+initPassport(app);
 
 // CORS policy
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -34,3 +39,37 @@ mongoose.connection
 
 Content.find().then(data => console.log(data));
 
+// will go access 3rd party to get permission to access the data
+app.get("/user/login/facebook", passport.authenticate("facebook", { scope: ["email"] })); //define the scope to also access the email
+app.get("/user/login/google", passport.authenticate("google", { scope: ["profile", "email"] })); //define this scope to have access to the email
+
+//once permission to exchange data is granted, a callback will be fired
+app.get(
+  "/user/login/facebook/callback",
+  passport.authenticate("facebook", { failureRedirect: "/auth/facebook" }),
+  // Redirect user back to the mobile app using deep linking
+  (req: any, res) => {
+    
+    res.redirect(
+      `storageInfoApp://app/login?firstName=${req.user.firstName}/lastName=${req.user.lastName}/email=${req.user}`
+    );
+  }
+);
+
+app.get(
+  "/user/login/google/callback",
+  passport.authenticate("google", { failureRedirect: "/auth/google" }),
+  // Redirect user back to the mobile app using deep linking
+  (req: any, res) => {
+    res.redirect(
+      `storageInfoApp://app/login?firstName=${req.user.firstName}/lastName=${req.user.lastName}/email=${req.user.email}/token=${req.user.token}`
+    );
+  }
+);
+
+app.get("/logout", function (req, res) {
+  console.log("here");
+  req.session.destroy(function () {
+    res.redirect("storageInfoApp://");
+  });
+});
