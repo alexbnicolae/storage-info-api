@@ -51,3 +51,43 @@ export const getWordFileService = async (parentId: any, token: string) => {
         return 400;
     }
 }
+
+export const editWordFileService = async (data: WordFileSchemaDto, token: string) => {
+    
+    let dataContent;
+    
+    try {
+        const user = await User.findOne({token: token});
+
+        if(data.parentId !== null)
+            dataContent = {
+                ...data,
+                user: user?._id,
+                parentId: new mongoose.Types.ObjectId((data.parentId as string))
+            }
+        else dataContent = {
+            ...data,
+            user: user?._id,
+        };
+        
+        let newFolder = await Wordfile.findOneAndUpdate({_id: data._id}, dataContent);
+
+        newFolder?.save()
+
+        return 200;
+    } catch (error) {
+        return 400;
+    }
+    
+}
+
+export const deleteWordFileService = async (fileId: string | undefined) => {
+
+    try {
+        await Wordfile.deleteOne({_id: fileId});
+
+        return 200;
+    } catch (error) {
+        return 400;
+    }
+}

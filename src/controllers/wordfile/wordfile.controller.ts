@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { verifyAuthorization } from "../../utils/verifyAuthorization";
-import { createWordFileValidator } from '../../routes/validators/wordfile.validators';
-import { createWordFileService, getWordFileService } from '../../services/wordfile/wordfile.service';
+import { createWordFileValidator, deleteWordFileValidator, editWordFileValidator } from '../../routes/validators/wordfile.validators';
+import { createWordFileService, deleteWordFileService, editWordFileService, getWordFileService } from '../../services/wordfile/wordfile.service';
 
 export const createWordFileController = async (req: Request, res: Response) => {
     // verify if the user is authorized
@@ -32,3 +32,33 @@ export const getWordFileController = async (req: Request, res: Response) => {
 
     return res.json({data: resProcessingData})
 }
+
+export const editWordFileController = async (req: Request, res: Response) => {
+    // debugger;
+    // verify if the user is authorized
+    const isAuth = await verifyAuthorization(req);
+    if(isAuth.code !== 200) return res.json({data: 401});
+
+    // verify if the user sent the data correctly
+    const { error, value } = editWordFileValidator.validate(req.body);
+    if(error) return res.json({data: 400});
+    
+    let resProcessingData = await editWordFileService(req.body, (isAuth.token as string))
+
+    return res.json({data: resProcessingData})
+}
+
+export const deleteWordFileController = async (req: Request, res: Response) => {
+    // verify if the user is authorized
+    const isAuth = await verifyAuthorization(req);
+    if(isAuth.code !== 200) return res.json({data: 401});
+
+    // verify if the user sent the data correctly
+    const { error, value } = deleteWordFileValidator.validate(req.body);
+    if(error) return res.json({data: 400});
+
+    let resProcessingData = await deleteWordFileService(req.body.id)
+
+    return res.json({data: resProcessingData})
+}
+

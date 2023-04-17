@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createWordFileController, getWordFileController } from '../controllers/wordfile/wordfile.controller';
+import { createWordFileController, deleteWordFileController, editWordFileController, getWordFileController } from '../controllers/wordfile/wordfile.controller';
 
 const wordfileRouter = Router();
 
@@ -8,5 +8,11 @@ wordfileRouter.post('/createWordFile', createWordFileController);
 
 // get file
 wordfileRouter.post('/getContent', getWordFileController);
+
+// edit file
+wordfileRouter.put('/editWordfile', editWordFileController);
+
+//delete file
+wordfileRouter.post('/deleteWordfile', deleteWordFileController);
 
 export default wordfileRouter;

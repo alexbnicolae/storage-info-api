@@ -10,6 +10,7 @@ const initPassport_1 = require("./initPassport");
 const auth_1 = __importDefault(require("./src/routes/auth"));
 const content_1 = __importDefault(require("./src/routes/content"));
 const wordfile_1 = __importDefault(require("./src/routes/wordfile"));
+const user_1 = __importDefault(require("./src/routes/user"));
 dotenv_1.default.config();
 const bodyParser = require('body-parser');
 const app = (0, express_1.default)();
@@ -37,3 +38,4 @@ mongoose_1.default.connection
 app.use('/', auth_1.default);
 app.use('/content', content_1.default);
 app.use('/wordfile', wordfile_1.default);
+app.use('/user', user_1.default);

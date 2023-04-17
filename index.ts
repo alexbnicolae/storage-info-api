@@ -5,6 +5,7 @@ import { initPassport } from './initPassport';
 import authRouter from './src/routes/auth';
 import contentRouter from './src/routes/content';
 import wordfileRouter from './src/routes/wordfile';
+import userRouter from './src/routes/user';
 
 dotenv.config();
 
@@ -42,4 +43,5 @@ mongoose.connection
 app.use('/', authRouter);
 app.use('/content', contentRouter);
 app.use('/wordfile', wordfileRouter);
+app.use('/user', userRouter);
 

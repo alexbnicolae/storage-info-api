@@ -8,7 +8,8 @@ const userSchema = new mongoose_1.Schema({
     email: String,
     externId: String,
     token: String,
-    validToken: Boolean
+    validToken: Boolean,
+    languageId: Number
 }, { timestamps: true });
 const User = (0, mongoose_1.model)('User', userSchema);
 exports.default = User;

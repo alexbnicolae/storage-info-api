@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getWordFileController = exports.createWordFileController = void 0;
+exports.deleteWordFileController = exports.editWordFileController = exports.getWordFileController = exports.createWordFileController = void 0;
 const verifyAuthorization_1 = require("../../utils/verifyAuthorization");
 const wordfile_validators_1 = require("../../routes/validators/wordfile.validators");
 const wordfile_service_1 = require("../../services/wordfile/wordfile.service");
@@ -31,3 +31,30 @@ const getWordFileController = async (req, res) => {
     return res.json({ data: resProcessingData });
 };
 exports.getWordFileController = getWordFileController;
+const editWordFileController = async (req, res) => {
+    // debugger;
+    // verify if the user is authorized
+    const isAuth = await (0, verifyAuthorization_1.verifyAuthorization)(req);
+    if (isAuth.code !== 200)
+        return res.json({ data: 401 });
+    // verify if the user sent the data correctly
+    const { error, value } = wordfile_validators_1.editWordFileValidator.validate(req.body);
+    if (error)
+        return res.json({ data: 400 });
+    let resProcessingData = await (0, wordfile_service_1.editWordFileService)(req.body, isAuth.token);
+    return res.json({ data: resProcessingData });
+};
+exports.editWordFileController = editWordFileController;
+const deleteWordFileController = async (req, res) => {
+    // verify if the user is authorized
+    const isAuth = await (0, verifyAuthorization_1.verifyAuthorization)(req);
+    if (isAuth.code !== 200)
+        return res.json({ data: 401 });
+    // verify if the user sent the data correctly
+    const { error, value } = wordfile_validators_1.deleteWordFileValidator.validate(req.body);
+    if (error)
+        return res.json({ data: 400 });
+    let resProcessingData = await (0, wordfile_service_1.deleteWordFileService)(req.body.id);
+    return res.json({ data: resProcessingData });
+};
+exports.deleteWordFileController = deleteWordFileController;

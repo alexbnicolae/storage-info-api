@@ -8,7 +8,8 @@ const userSchema = new Schema(
         email: String,
         externId: String,
         token: String,
-        validToken: Boolean
+        validToken: Boolean,
+        languageId: Number
     },
     { timestamps: true }
 );

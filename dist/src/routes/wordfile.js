@@ -7,4 +7,8 @@ const wordfileRouter = (0, express_1.Router)();
 wordfileRouter.post('/createWordFile', wordfile_controller_1.createWordFileController);
 // get file
 wordfileRouter.post('/getContent', wordfile_controller_1.getWordFileController);
+// edit file
+wordfileRouter.put('/editWordfile', wordfile_controller_1.editWordFileController);
+//delete file
+wordfileRouter.post('/deleteWordfile', wordfile_controller_1.deleteWordFileController);
 exports.default = wordfileRouter;

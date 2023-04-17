@@ -1,9 +1,9 @@
 import passport from "passport";
 import FacebookStrategy from "passport-facebook";
-import TwitterStrategy from "passport-twitter";
+import GitHubStrategy from "passport-github2";
 import GoogleStrategy from "passport-google-oauth20";
 import "dotenv/config";
-import { facebook, google, twitter } from "./passportConfig";
+import { facebook, github, google } from "./passportConfig";
 import session from "express-session";
 
 export const initPassport = (app: any) => {
@@ -43,11 +43,11 @@ passport.use(
 );
 
 passport.use(
-  new TwitterStrategy.Strategy(
-    twitter,
+  new GitHubStrategy.Strategy(
+    github,
     async (accessToken: any, refreshToken: any, profile: any, done: any) => {
       //done(err, user) will return the user we got from fb
-      done(null, formatTwitter(profile._json));
+      done(null, formatGithub(profile));
     }
   )
 );
@@ -81,11 +81,10 @@ const formatFB = (profile: any) => {
   };
 };
 
-const formatTwitter = (profile: any) => {
-  console.log(profile)
+const formatGithub = (profile: any) => {
   return {
     id: profile.id,
-    name: profile.name,
-    // email: profile.email
+    name: profile.username,
+    email: profile.emails[0].value
   };
 };

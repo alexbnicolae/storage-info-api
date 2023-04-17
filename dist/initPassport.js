@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.initPassport = void 0;
 const passport_1 = __importDefault(require("passport"));
 const passport_facebook_1 = __importDefault(require("passport-facebook"));
-const passport_twitter_1 = __importDefault(require("passport-twitter"));
+const passport_github2_1 = __importDefault(require("passport-github2"));
 const passport_google_oauth20_1 = __importDefault(require("passport-google-oauth20"));
 require("dotenv/config");
 const passportConfig_1 = require("./passportConfig");
@@ -34,9 +34,9 @@ passport_1.default.use(new passport_google_oauth20_1.default.Strategy(passportCo
     //done(err, user) will return the user we got from fb
     done(null, formatGoogle(profile._json));
 }));
-passport_1.default.use(new passport_twitter_1.default.Strategy(passportConfig_1.twitter, async (accessToken, refreshToken, profile, done) => {
+passport_1.default.use(new passport_github2_1.default.Strategy(passportConfig_1.github, async (accessToken, refreshToken, profile, done) => {
     //done(err, user) will return the user we got from fb
-    done(null, formatTwitter(profile._json));
+    done(null, formatGithub(profile));
 }));
 ////////// TWITTER //////////
 ////////// Serialize/Deserialize //////////
@@ -60,11 +60,10 @@ const formatFB = (profile) => {
         // email: profile.email
     };
 };
-const formatTwitter = (profile) => {
-    console.log(profile);
+const formatGithub = (profile) => {
     return {
         id: profile.id,
-        name: profile.name,
-        // email: profile.email
+        name: profile.username,
+        email: profile.emails[0].value
     };
 };
