@@ -1,16 +1,14 @@
-import { Request } from "express";
+import { Request, Response, NextFunction } from "express";
 import { httpInterceptor } from "./httpInterceptor";
 
-export const verifyAuthorization = async (req: Request) => {
+export const verifyAuthorization = async (req: Request, res: Response, next: NextFunction) => {
     const token = req?.headers?.authorization?.split(' ')[1];
     let code = await httpInterceptor(token);
-
+    
     if(code == 401){
-        let res = { code: 401, token: null }
-        return res;
+        return res.json({data: 401});
     }
-    else {
-        let res = { code: 200, token: token } 
-        return res;
-    }
+    
+    next();
+    
 }

@@ -1,23 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.editUserController = exports.getUserController = void 0;
-const verifyAuthorization_1 = require("../../utils/verifyAuthorization");
 const user_service_1 = require("../../services/user/user.service");
+const getToken_1 = require("../../utils/getToken");
 const getUserController = async (req, res) => {
-    // verify if the user is authorized
-    const isAuth = await (0, verifyAuthorization_1.verifyAuthorization)(req);
-    if (isAuth.code !== 200)
-        return res.json({ data: 401 });
-    let resProcessingData = await (0, user_service_1.getUserService)(isAuth.token);
+    //getToken
+    let token = await (0, getToken_1.getToken)(req);
+    let resProcessingData = await (0, user_service_1.getUserService)(token);
     return res.json({ data: resProcessingData });
 };
 exports.getUserController = getUserController;
 const editUserController = async (req, res) => {
-    // verify if the user is authorized
-    const isAuth = await (0, verifyAuthorization_1.verifyAuthorization)(req);
-    if (isAuth.code !== 200)
-        return res.json({ data: 401 });
-    let resProcessingData = await (0, user_service_1.editUserService)(req.body, isAuth.token);
+    //getToken
+    let token = await (0, getToken_1.getToken)(req);
+    let resProcessingData = await (0, user_service_1.editUserService)(req.body, token);
     return res.json({ data: resProcessingData });
 };
 exports.editUserController = editUserController;
