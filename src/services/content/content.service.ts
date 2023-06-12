@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import User from "../../models/Users/user.schema";
 import Content from "../../models/content/content.schema";
-import { ContentSchemaDto } from "../../models/Content/content.schema.types";
+import { ContentSchemaDto } from "../../models/content/content.schema.types";
 
 export const createFolderService = async (data: ContentSchemaDto, token: string) => {
     
