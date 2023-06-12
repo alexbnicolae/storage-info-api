@@ -6,4 +6,5 @@ var FolderContentEnum;
     FolderContentEnum[FolderContentEnum["Folder"] = 1] = "Folder";
     FolderContentEnum[FolderContentEnum["File"] = 2] = "File";
     FolderContentEnum[FolderContentEnum["Note"] = 3] = "Note";
+    FolderContentEnum[FolderContentEnum["All"] = 4] = "All";
 })(FolderContentEnum = exports.FolderContentEnum || (exports.FolderContentEnum = {}));

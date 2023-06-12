@@ -9,7 +9,9 @@ const userSchema = new mongoose_1.Schema({
     externId: String,
     token: String,
     validToken: Boolean,
-    languageId: Number
+    languageId: Number,
+    visualMode: Number,
+    authPlatform: Number
 }, { timestamps: true });
 const User = (0, mongoose_1.model)('User', userSchema);
 exports.default = User;

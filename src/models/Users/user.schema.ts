@@ -9,7 +9,9 @@ const userSchema = new Schema(
         externId: String,
         token: String,
         validToken: Boolean,
-        languageId: Number
+        languageId: Number,
+        visualMode: Number,
+        authPlatform: Number
     },
     { timestamps: true }
 );

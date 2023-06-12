@@ -1,10 +1,25 @@
-// Require Mongoose
 import { model, models, Schema } from 'mongoose';
-import { ContentSchemaDto } from './content.schema.types';
 
+// Define schema for note content
+
+const noteContentSchema = new Schema({
+    content: {
+        type: String,
+        required: false
+    },
+    type: {
+        type: Schema.Types.Mixed,
+        required: true
+    },
+    additional: {
+        type: Schema.Types.Mixed,
+        required: false
+    },
+
+})
 
 // Define a schema
-const contentSchema: Schema<ContentSchemaDto> = new Schema(
+const noteSchema = new Schema(
     {
         user: {
             type: Schema.Types.ObjectId,
@@ -18,10 +33,7 @@ const contentSchema: Schema<ContentSchemaDto> = new Schema(
             type: Number,
             required: true
         },
-        content: {
-            type: Schema.Types.Mixed,
-            required: false
-        },
+        content: [noteContentSchema],
         encrypted: {
             type: Boolean,
             required: false
@@ -38,6 +50,6 @@ const contentSchema: Schema<ContentSchemaDto> = new Schema(
     { timestamps: true }
 );
 
-const Content = model('Content', contentSchema);
+const Note = model('Note', noteSchema);
 
-export default Content;
+export default Note;

@@ -11,11 +11,15 @@ const auth_1 = __importDefault(require("./src/routes/auth"));
 const content_1 = __importDefault(require("./src/routes/content"));
 const wordfile_1 = __importDefault(require("./src/routes/wordfile"));
 const user_1 = __importDefault(require("./src/routes/user"));
+const note_1 = __importDefault(require("./src/routes/note"));
+const data_1 = __importDefault(require("./src/routes/data"));
 dotenv_1.default.config();
 const bodyParser = require('body-parser');
+const helmet = require("helmet");
 const app = (0, express_1.default)();
 const port = 3000;
 app.use(bodyParser.json());
+app.use(helmet());
 //init passport
 (0, initPassport_1.initPassport)(app);
 // CORS policy
@@ -38,4 +42,6 @@ mongoose_1.default.connection
 app.use('/', auth_1.default);
 app.use('/content', content_1.default);
 app.use('/wordfile', wordfile_1.default);
+app.use('/note', note_1.default);
 app.use('/user', user_1.default);
+app.use('/data', data_1.default);

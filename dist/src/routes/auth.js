@@ -8,6 +8,8 @@ const passport_1 = __importDefault(require("passport"));
 const createToken_1 = require("../utils/createToken");
 const user_schema_1 = __importDefault(require("../models/Users/user.schema"));
 const httpInterceptor_1 = require("../utils/httpInterceptor");
+const visual_mode_enum_1 = require("../utils/enums/visual-mode.enum");
+const auth_platform_enum_1 = require("../utils/enums/auth-platform.enum");
 const authRouter = (0, express_1.Router)();
 // will go access 3rd party to get permission to access the data
 authRouter.get("/user/login/facebook", passport_1.default.authenticate("facebook", { scope: ["profile", "email"] }), async (req, res) => { console.log(req.body); }); //define the scope to also access the email
@@ -31,7 +33,6 @@ authRouter.get("/user/login/google/callback", passport_1.default.authenticate("g
 // Redirect user back to the mobile app using deep linking
 async (req, res) => {
     var _a;
-    console.log(req.body);
     let token = (0, createToken_1.createToken)(req.user); // token created
     let user = await user_schema_1.default.findOne({ externId: req.user.id });
     if (!user) {
@@ -41,7 +42,9 @@ async (req, res) => {
             externId: (_a = req.user.id) === null || _a === void 0 ? void 0 : _a.toString(),
             token: token,
             validToken: true,
-            languageId: 0
+            languageId: 0,
+            visualMode: visual_mode_enum_1.VisualModeEnum.Original,
+            authPlatform: auth_platform_enum_1.AuthPlatformEnum.Google
         }, { upsert: true });
     }
     else {
@@ -62,7 +65,9 @@ authRouter.get('/user/login/github/callback', passport_1.default.authenticate('g
             externId: (_a = req.user.id) === null || _a === void 0 ? void 0 : _a.toString(),
             token: token,
             validToken: true,
-            languageId: 0
+            languageId: 0,
+            visualMode: visual_mode_enum_1.VisualModeEnum.Original,
+            authPlatform: auth_platform_enum_1.AuthPlatformEnum.Github
         }, { upsert: true });
     }
     else {

@@ -6,16 +6,21 @@ import authRouter from './src/routes/auth';
 import contentRouter from './src/routes/content';
 import wordfileRouter from './src/routes/wordfile';
 import userRouter from './src/routes/user';
+import noteRouter from './src/routes/note';
+import dataRouter from './src/routes/data';
 
 dotenv.config();
 
 const bodyParser = require('body-parser');
+const helmet = require("helmet");
 const app: Express = express();
 const port = 3000;
 
 app.use(bodyParser.json());
+app.use(helmet());
 //init passport
 initPassport(app);
+
 
 // CORS policy
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -43,5 +48,7 @@ mongoose.connection
 app.use('/', authRouter);
 app.use('/content', contentRouter);
 app.use('/wordfile', wordfileRouter);
+app.use('/note', noteRouter);
 app.use('/user', userRouter);
+app.use('/data', dataRouter);
 

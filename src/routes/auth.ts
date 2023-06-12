@@ -3,6 +3,8 @@ import passport from "passport";
 import { createToken } from '../utils/createToken';
 import User from '../models/Users/user.schema';
 import { httpInterceptor } from '../utils/httpInterceptor';
+import { VisualModeEnum } from '../utils/enums/visual-mode.enum';
+import { AuthPlatformEnum } from '../utils/enums/auth-platform.enum';
 
 const authRouter = Router();
 
@@ -37,7 +39,6 @@ authRouter.get(
   passport.authenticate("google", { failureRedirect: "/auth/google" }),
   // Redirect user back to the mobile app using deep linking
   async (req: any, res: any) => {
-    console.log(req.body)
     let token = createToken(req.user); // token created
 
     let user = await User.findOne({externId: req.user.id});
@@ -49,7 +50,9 @@ authRouter.get(
           externId: req.user.id?.toString(),
           token: token,
           validToken: true,
-          languageId: 0
+          languageId: 0,
+          visualMode: VisualModeEnum.Original,
+          authPlatform: AuthPlatformEnum.Google
       }, { upsert: true })
     }
     else {
@@ -79,7 +82,9 @@ authRouter.get('/user/login/github/callback',
           externId: req.user.id?.toString(),
           token: token,
           validToken: true,
-          languageId: 0
+          languageId: 0,
+          visualMode: VisualModeEnum.Original,
+          authPlatform: AuthPlatformEnum.Github
       }, { upsert: true })
 
     } else {
