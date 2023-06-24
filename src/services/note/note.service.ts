@@ -5,7 +5,7 @@ import User from "../../models/Users/user.schema";
 export const createNoteService = async (data: any, token: string) => {
 
     let dataContent;
-    
+    // debugger;
     try {
         const user = await User.findOne({token: token});
 

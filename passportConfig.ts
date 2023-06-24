@@ -8,11 +8,17 @@ export const facebook:  any = {
   //todo: based on env, change url to localhost, dev or prod
   callbackURL: "https://data-wallet-server.herokuapp.com/user/login/facebook/callback",
 };
+// export const google: any = {
+//   clientID: process.env.GMAIL_APP_ID,
+//   clientSecret: process.env.GMAIL_APP_SECRET,
+//   //todo: based on env, change url to localhost, dev or prod
+//   callbackURL: "https://data-wallet-server.herokuapp.com/user/login/google/callback",
+// };
 export const google: any = {
   clientID: process.env.GMAIL_APP_ID,
   clientSecret: process.env.GMAIL_APP_SECRET,
   //todo: based on env, change url to localhost, dev or prod
-  callbackURL: "https://data-wallet-server.herokuapp.com/user/login/google/callback",
+  callbackURL: "https://f603-2a02-2f02-504-2000-50b-aee8-827a-4c57.ngrok-free.app/user/login/google/callback",
 };
 
 

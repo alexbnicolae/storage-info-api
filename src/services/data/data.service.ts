@@ -4,6 +4,13 @@ import User from "../../models/Users/user.schema";
 import Wordfile from "../../models/WordFiles/wordfile.schema";
 import Content from "../../models/content/content.schema";
 import { FolderContentEnum } from "../../utils/enums/folder-content.enum";
+import { NoteTypeEnum } from "../../utils/enums/note-type.enum";
+import { debug } from "console";
+
+export type EditModeItemType = {
+    id?: string,
+    type?: FolderContentEnum
+}
 
 export const getDataService = async (data: any, token: string) => {
     
@@ -11,7 +18,7 @@ export const getDataService = async (data: any, token: string) => {
     
     let dataToSkip = pageSize * (pageIndex - 1);
     let dataLengthToReturn = pageSize;
-    let retunrData: any[] = [];
+    let returnData: any[] = [];
     // debugger;
     try {
         const user = await User.findOne({token: token});
@@ -72,13 +79,13 @@ export const getDataService = async (data: any, token: string) => {
                             .skip(dataToSkip)
                             .limit(contentLength - dataToSkip)
 
-                    retunrData = [
-                        ...retunrData,
+                    returnData = [
+                        ...returnData,
                         ...getData
                     ];
 
                     dataToSkip = 0;
-                    dataLengthToReturn -= retunrData.length;
+                    dataLengthToReturn -= getData.length;
                 } else {
                     getData = await Content
                             .find(query)
@@ -86,12 +93,12 @@ export const getDataService = async (data: any, token: string) => {
                             .skip(dataToSkip)
                             .limit(dataLengthToReturn - dataToSkip);
 
-                    retunrData = [
-                        ...retunrData,
+                    returnData = [
+                        ...returnData,
                         ...getData
                     ];
                     return {
-                        items: retunrData,
+                        items: returnData,
                         pages: numberOfPages,
                         currentIndex: pageIndex,
                         totalItems: dataLength
@@ -111,12 +118,12 @@ export const getDataService = async (data: any, token: string) => {
                             .skip(dataToSkip)
                             .limit(wordFileLength - dataToSkip)
 
-                    retunrData = [
-                        ...retunrData,
+                    returnData = [
+                        ...returnData,
                         ...getData
                     ];
                     dataToSkip = 0;
-                    dataLengthToReturn -= retunrData.length;
+                    dataLengthToReturn -= getData.length;
                 } else {
                     getData = await Wordfile
                             .find(query)
@@ -124,12 +131,12 @@ export const getDataService = async (data: any, token: string) => {
                             .skip(dataToSkip)
                             .limit(dataLengthToReturn - dataToSkip);
 
-                    retunrData = [
-                        ...retunrData,
+                    returnData = [
+                        ...returnData,
                         ...getData
                     ];
                     return {
-                        items: retunrData,
+                        items: returnData,
                         pages: numberOfPages,
                         currentIndex: pageIndex,
                         totalItems: dataLength
@@ -149,12 +156,12 @@ export const getDataService = async (data: any, token: string) => {
                             .skip(dataToSkip)
                             .limit(notesLength - dataToSkip)
 
-                    retunrData = [
-                        ...retunrData,
+                    returnData = [
+                        ...returnData,
                         ...getData
                     ];
                     dataToSkip = 0;
-                    dataLengthToReturn -= retunrData.length;
+                    dataLengthToReturn -= getData.length;
                 } else {
                     getData = await Note
                             .find(query)
@@ -162,12 +169,12 @@ export const getDataService = async (data: any, token: string) => {
                             .skip(dataToSkip)
                             .limit(dataLengthToReturn - dataToSkip);
 
-                    retunrData = [
-                        ...retunrData,
+                    returnData = [
+                        ...returnData,
                         ...getData
                     ];
                     return {
-                        items: retunrData,
+                        items: returnData,
                         pages: numberOfPages,
                         currentIndex: pageIndex,
                         totalItems: dataLength
@@ -179,3 +186,380 @@ export const getDataService = async (data: any, token: string) => {
         return 400;
     }
 }  
+
+export const editDataService = async(data: any, token: string) => {
+
+    const { items, allItemsSelected, newParentId, oldParentId } = data;
+    
+    try {
+        const user = await User.findOne({token: token});
+
+        if(!allItemsSelected) {
+            let folders = (items as EditModeItemType[])
+                .filter(f => f.type === FolderContentEnum.Folder && f.id != newParentId)
+            
+            let updateFolders = folders.map(m => {
+                return {
+                    updateOne: {
+                        filter: {
+                            _id: m.id
+                        },
+                        update: {
+                            $set: {
+                                parentId: newParentId
+                            }
+                        }
+                    }
+                }
+            })
+    
+            let wordFiles = (items as EditModeItemType[])
+                .filter(f => f.type === FolderContentEnum.File)
+    
+            let updateWordFiles = wordFiles.map(m => {
+                return {
+                    updateOne: {
+                        filter: {
+                            _id: m.id
+                        },
+                        update: {
+                            $set: {
+                                parentId: newParentId
+                            }
+                        }
+                    }
+                }
+            })
+    
+            let notes = (items as EditModeItemType[])
+                .filter(f => f.type === FolderContentEnum.Note)
+    
+            let updateNotes = notes.map(m => {
+                return {
+                    updateOne: {
+                        filter: {
+                            _id: m?.id
+                        },
+                        update: {
+                            $set: {
+                                parentId: newParentId
+                            }
+                        }
+                    }
+                }
+            })
+    
+            let respFolders = await Content.bulkWrite(updateFolders);
+            let respWordFiles = await Wordfile.bulkWrite(updateWordFiles);
+            let respNotes = await Note.bulkWrite(updateNotes as any[]);
+        } else {
+            // debugger;
+            let folders = (items as EditModeItemType[])
+                .filter(f => f.type === FolderContentEnum.Folder)
+                .map(m => m.id)
+
+            let foldersToUpdate = (await Content.find({
+                user: user?._id,
+                parentId: oldParentId,
+                _id: {
+                    $nin: folders
+                }
+            })).map(m => m._id)
+            
+            let wordFiles = (items as EditModeItemType[])
+                .filter(f => f.type === FolderContentEnum.File)
+                .map(m => m.id)
+
+            let wordFilesToUpdate = (await Wordfile.find({
+                    user: user?._id,
+                    parentId: oldParentId,
+                    _id: {
+                        $nin: wordFiles
+                    }
+                })).map(m => m._id)
+    
+            let notes = (items as EditModeItemType[])
+                .filter(f => f.type === FolderContentEnum.Note)
+                .map(m => m.id)
+
+            let notesToUpdate = (await Note.find({
+                    user: user?._id,
+                    parentId: oldParentId,
+                    _id: {
+                        $nin: notes
+                    }
+                })).map(m => m._id)
+
+            let updateFolders = foldersToUpdate.map(m => {
+                return {
+                    updateOne: {
+                        filter: {
+                            _id: m
+                        },
+                        update: {
+                            $set: {
+                                parentId: newParentId
+                            }
+                        }
+                    }
+                }
+            });
+    
+            let updateWordFiles = wordFilesToUpdate.map(m => {
+                return {
+                    updateOne: {
+                        filter: {
+                            _id: m
+                        },
+                        update: {
+                            $set: {
+                                parentId: newParentId
+                            }
+                        }
+                    }
+                }
+            });
+    
+            let updateNotes = notesToUpdate.map(m => {
+                return {
+                    updateOne: {
+                        filter: {
+                            _id: m
+                        },
+                        update: {
+                            $set: {
+                                parentId: newParentId
+                            }
+                        }
+                    }
+                }
+            });
+
+            let respFolders = await Content.bulkWrite(updateFolders as any[]);
+            let respWordFiles = await Wordfile.bulkWrite(updateWordFiles as any[]);
+            let respNotes = await Note.bulkWrite(updateNotes as any[]);
+        }
+
+        return 200;
+    } catch (error) {
+        return 400;
+    }
+}
+
+export const deleteDataService = async(data: any, token: string) => {
+    const { items, allItemsSelected, parentId } = data;
+    // debugger;
+    try {
+        const user = await User.findOne({token: token});
+
+        if(!allItemsSelected) {
+            let folders = (items as EditModeItemType[])
+                .filter(f => f.type === FolderContentEnum.Folder)
+    
+            //check if the folders are empty
+            for(let i = 0; i < folders.length; i++) {
+                let folder = folders[i];
+    
+                let query = {
+                    parentId: folder.id
+                }
+    
+                let childFolders = await Content.count(query);
+    
+                if(childFolders > 0)
+                    return {
+                        code: 400,
+                        messageTag: "folderNotEmpty"
+                    }
+    
+                let childWordFiles = await Wordfile.count(query);
+    
+                if(childWordFiles > 0)
+                    return {
+                        code: 400,
+                        messageTag: "folderNotEmpty"
+                    }
+    
+                let childNotes = await Note.count(query);
+    
+                if(childNotes > 0)
+                    return {
+                        code: 400,
+                        messageTag: "folderNotEmpty"
+                    }
+                
+            }
+    
+            //if the code reach this stage, so the folder is empty
+    
+            let wordFiles = (items as EditModeItemType[])
+                .filter(f => f.type === FolderContentEnum.File)
+    
+            let notes = (items as EditModeItemType[])
+                .filter(f => f.type === FolderContentEnum.Note)
+
+            let deleteFolders = folders.map(m => {
+                return {
+                    deleteOne: {
+                        filter: {
+                            _id: m.id
+                        }
+                    }
+                }
+            });
+
+            let deleteWordFiles = wordFiles.map(m => {
+                return {
+                    deleteOne: {
+                        filter: {
+                            _id: m.id
+                        }
+                    }
+                }
+            });
+
+            let deleteNotes = notes.map(m => {
+                return {
+                    deleteOne: {
+                        filter: {
+                            _id: m.id
+                        }
+                    }
+                }
+            });
+
+            let respFolders = await Content.bulkWrite(deleteFolders);
+            let respWordFiles = await Wordfile.bulkWrite(deleteWordFiles);
+            let respNotes = await Note.bulkWrite(deleteNotes as any[]);
+
+            return {
+                code: 200,
+                contentToDelete: []
+            };
+        } else {
+            // debugger;
+            let folders = (items as EditModeItemType[])
+                .filter(f => f.type === FolderContentEnum.Folder)
+                .map(m => m.id)
+
+            let foldersToDelete = (await Content.find({
+                user: user?._id,
+                parentId: parentId,
+                _id: {
+                    $nin: folders
+                }
+            })).map(m => m._id)
+
+            //check if the folders are empty
+            for(let i = 0; i < foldersToDelete.length; i++) {
+                let folder = foldersToDelete[i];
+    
+                let query = {
+                    parentId: folder
+                }
+    
+                let childFolders = await Content.count(query);
+    
+                if(childFolders > 0)
+                    return {
+                        code: 400,
+                        messageTag: "folderNotEmpty"
+                    }
+    
+                let childWordFiles = await Wordfile.count(query);
+    
+                if(childWordFiles > 0)
+                    return {
+                        code: 400,
+                        messageTag: "folderNotEmpty"
+                    }
+    
+                let childNotes = await Note.count(query);
+    
+                if(childNotes > 0)
+                    return {
+                        code: 400,
+                        messageTag: "folderNotEmpty"
+                    }
+                
+            }
+
+            //if the code reach this stage, so the folder is empty
+            
+            let wordFiles = (items as EditModeItemType[])
+                .filter(f => f.type === FolderContentEnum.File)
+                .map(m => m.id)
+
+            let wordFIlesToDelete = (await Wordfile.find({
+                    user: user?._id,
+                    parentId: parentId,
+                    _id: {
+                        $nin: wordFiles
+                    }
+                })).map(m => m._id)
+    
+            let notes = (items as EditModeItemType[])
+                .filter(f => f.type === FolderContentEnum.Note)
+                .map(m => m.id)
+
+            let notesToDelete = (await Note.find({
+                    user: user?._id,
+                    parentId: parentId,
+                    _id: {
+                        $nin: notes
+                    }
+                })).map(m => ({
+                    id: m._id,
+                    content: m.content
+                }))
+
+            let notesToReturn = notesToDelete
+                .map(m => m.content.filter(f => f.type !== NoteTypeEnum.Text))
+                .reduce(
+                    (prev, current) => [...prev, ...current], []
+                )
+
+                let deleteFolders = foldersToDelete.map(m => {
+                    return {
+                        deleteOne: {
+                            filter: {
+                                _id: m
+                            }
+                        }
+                    }
+                });
+    
+                let deleteWordFiles = wordFIlesToDelete.map(m => {
+                    return {
+                        deleteOne: {
+                            filter: {
+                                _id: m
+                            }
+                        }
+                    }
+                });
+    
+                let deleteNotes = notesToDelete.map(m => {
+                    return {
+                        deleteOne: {
+                            filter: {
+                                _id: m.id
+                            }
+                        }
+                    }
+                });
+    
+                let respFolders = await Content.bulkWrite(deleteFolders);
+                let respWordFiles = await Wordfile.bulkWrite(deleteWordFiles);
+                let respNotes = await Note.bulkWrite(deleteNotes as any[]);
+
+                return {
+                    code: 200,
+                    contentToDelete: notesToReturn
+                }
+        }
+
+    } catch (error) {
+        return 400;
+    }
+}

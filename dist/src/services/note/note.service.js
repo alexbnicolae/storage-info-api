@@ -9,6 +9,7 @@ const note_schema_1 = __importDefault(require("../../models/Notes/note.schema"))
 const user_schema_1 = __importDefault(require("../../models/Users/user.schema"));
 const createNoteService = async (data, token) => {
     let dataContent;
+    // debugger;
     try {
         const user = await user_schema_1.default.findOne({ token: token });
         if (data.parentId !== null)
