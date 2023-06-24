@@ -47,8 +47,11 @@ export const deleteFolderController = async (req: Request, res: Response) => {
     // verify if the user sent the data correctly
     const { error, value } = deleteContentValidator.validate(req.body);
     if(error) return res.json({data: 400});
+
+    //getToken
+    let token = await getToken(req);
     
-    let resProcessingData = await deleteFolderService(req.body.id)
+    let resProcessingData = await deleteFolderService(req.body.id, (token as string))
 
     return res.json({data: resProcessingData})
 }
