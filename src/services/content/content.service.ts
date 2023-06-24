@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import User from "../../models/Users/user.schema";
 import Content from "../../models/content/content.schema";
 import { ContentSchemaDto } from "../../models/content/content.schema.types";
+import Wordfile from "../../models/WordFiles/wordfile.schema";
+import Note from "../../models/Notes/note.schema";
 
 export const createFolderService = async (data: ContentSchemaDto, token: string) => {
     
@@ -79,14 +81,35 @@ export const editFolderService = async (data: ContentSchemaDto, token: string) =
     }
 }   
 
-export const deleteFolderService = async (folderId: string | undefined) => {
+export const deleteFolderService = async (folderId: string | undefined, token: string) => {
 
     try {
-        let content = await Content.find({
-            parentId: folderId
-        })
+        const user = await User.findOne({token: token});
 
-        if(content.length > 0)
+        let query = {
+            user: user?._id,
+            parentId: folderId
+        }
+
+        let content = await Content.count(query)
+
+        if(content > 0)
+            return {
+                code: 400,
+                messageTag: "folderNotEmpty"
+            }
+
+        content = await Wordfile.count(query)
+
+        if(content > 0)
+            return {
+                code: 400,
+                messageTag: "folderNotEmpty"
+            }
+
+        content = await Note.count(query)
+
+        if(content > 0)
             return {
                 code: 400,
                 messageTag: "folderNotEmpty"
