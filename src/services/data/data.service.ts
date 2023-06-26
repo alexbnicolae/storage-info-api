@@ -91,7 +91,7 @@ export const getDataService = async (data: any, token: string) => {
                             .find(query)
                             .sort({_id: 1})
                             .skip(dataToSkip)
-                            .limit(dataLengthToReturn - dataToSkip);
+                            .limit(dataLengthToReturn);
 
                     returnData = [
                         ...returnData,
@@ -129,7 +129,7 @@ export const getDataService = async (data: any, token: string) => {
                             .find(query)
                             .sort({_id: 1})
                             .skip(dataToSkip)
-                            .limit(dataLengthToReturn - dataToSkip);
+                            .limit(dataLengthToReturn);
 
                     returnData = [
                         ...returnData,
@@ -167,7 +167,7 @@ export const getDataService = async (data: any, token: string) => {
                             .find(query)
                             .sort({_id: 1})
                             .skip(dataToSkip)
-                            .limit(dataLengthToReturn - dataToSkip);
+                            .limit(dataLengthToReturn);
 
                     returnData = [
                         ...returnData,

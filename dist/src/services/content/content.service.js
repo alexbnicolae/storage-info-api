@@ -7,6 +7,8 @@ exports.deleteFolderService = exports.editFolderService = exports.getContentServ
 const mongoose_1 = __importDefault(require("mongoose"));
 const user_schema_1 = __importDefault(require("../../models/Users/user.schema"));
 const content_schema_1 = __importDefault(require("../../models/content/content.schema"));
+const wordfile_schema_1 = __importDefault(require("../../models/WordFiles/wordfile.schema"));
+const note_schema_1 = __importDefault(require("../../models/Notes/note.schema"));
 const createFolderService = async (data, token) => {
     let dataContent;
     try {
@@ -60,12 +62,27 @@ const editFolderService = async (data, token) => {
     }
 };
 exports.editFolderService = editFolderService;
-const deleteFolderService = async (folderId) => {
+const deleteFolderService = async (folderId, token) => {
     try {
-        let content = await content_schema_1.default.find({
+        const user = await user_schema_1.default.findOne({ token: token });
+        let query = {
+            user: user === null || user === void 0 ? void 0 : user._id,
             parentId: folderId
-        });
-        if (content.length > 0)
+        };
+        let content = await content_schema_1.default.count(query);
+        if (content > 0)
+            return {
+                code: 400,
+                messageTag: "folderNotEmpty"
+            };
+        content = await wordfile_schema_1.default.count(query);
+        if (content > 0)
+            return {
+                code: 400,
+                messageTag: "folderNotEmpty"
+            };
+        content = await note_schema_1.default.count(query);
+        if (content > 0)
             return {
                 code: 400,
                 messageTag: "folderNotEmpty"
