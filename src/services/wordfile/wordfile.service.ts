@@ -14,11 +14,13 @@ export const createWordFileService = async (data: WordFileSchemaDto, token: stri
             dataContent = {
                 ...data,
                 user: user?._id,
-                parentId: new mongoose.Types.ObjectId((data.parentId as string))
+                parentId: new mongoose.Types.ObjectId((data.parentId as string)),
+                isDuplicate: false
             }
         else dataContent = {
             ...data,
             user: user?._id,
+            isDuplicate: false
         };
         
         let newFolder = await Wordfile.create(dataContent);

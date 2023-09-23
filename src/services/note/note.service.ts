@@ -13,11 +13,13 @@ export const createNoteService = async (data: any, token: string) => {
             dataContent = {
                 ...data,
                 user: user?._id,
-                parentId: new mongoose.Types.ObjectId((data.parentId as string))
+                parentId: new mongoose.Types.ObjectId((data.parentId as string)),
+                isDuplicate: false
             }
         else dataContent = {
             ...data,
             user: user?._id,
+            isDuplicate: false
         };
         
         let newNote = await Note.create(dataContent);

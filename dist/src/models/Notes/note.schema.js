@@ -43,6 +43,10 @@ const noteSchema = new mongoose_1.Schema({
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'Content'
     },
+    isDuplicate: {
+        type: Boolean,
+        required: false
+    },
 }, { timestamps: true });
 const Note = (0, mongoose_1.model)('Note', noteSchema);
 exports.default = Note;

@@ -37,5 +37,6 @@ export type WordFileSchemaDto = {
         }
     },
     encrypted?: boolean
-    folderPassword?: string
+    folderPassword?: string,
+    isDuplicate?: boolean
 }

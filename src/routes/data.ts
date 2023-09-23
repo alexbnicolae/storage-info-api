@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { verifyAuthorization } from '../utils/verifyAuthorization';
-import { deleteDataController, editDataController, getDataController } from '../controllers/data/data.controller';
+import { copyDataController, deleteDataController, editDataController, getDataController } from '../controllers/data/data.controller';
 
 const dataRouter = Router();
 
@@ -12,5 +12,9 @@ dataRouter.post('/editData', verifyAuthorization, editDataController)
 
 // delete data
 dataRouter.post('/deleteData', verifyAuthorization, deleteDataController)
+
+//copy data
+dataRouter.post('/copyData', verifyAuthorization, copyDataController)
+
 
 export default dataRouter;

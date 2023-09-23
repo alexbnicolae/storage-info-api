@@ -34,6 +34,10 @@ const contentSchema: Schema<ContentSchemaDto> = new Schema(
             type: Schema.Types.ObjectId,
             ref: 'Content'
         },
+        isDuplicate: {
+            type: Boolean,
+            required: false
+        },
     },
     { timestamps: true }
 );

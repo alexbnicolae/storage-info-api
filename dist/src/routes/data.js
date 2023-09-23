@@ -10,4 +10,6 @@ dataRouter.post('/getData', verifyAuthorization_1.verifyAuthorization, data_cont
 dataRouter.post('/editData', verifyAuthorization_1.verifyAuthorization, data_controller_1.editDataController);
 // delete data
 dataRouter.post('/deleteData', verifyAuthorization_1.verifyAuthorization, data_controller_1.deleteDataController);
+//copy data
+dataRouter.post('/copyData', verifyAuthorization_1.verifyAuthorization, data_controller_1.copyDataController);
 exports.default = dataRouter;

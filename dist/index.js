@@ -45,3 +45,28 @@ app.use('/wordfile', wordfile_1.default);
 app.use('/note', note_1.default);
 app.use('/user', user_1.default);
 app.use('/data', data_1.default);
+// const driveClientId = process.env.GMAIL_APP_ID || '';
+// const driveClientSecret = process.env.GMAIL_APP_SECRET || '';
+// const driveRedirectUri = process.env.GOOGLE_DRIVE_REDIRECT_URI || '';
+// const driveRefreshToken = process.env.GOOGLE_DRIVE_REFRESH_TOKEN || '';
+// (async () => {
+//   const googleDriveService = new GoogleDriveService(driveClientId, driveClientSecret, driveRedirectUri, driveRefreshToken);
+//   const finalPath = path.resolve(__dirname, '../public/SpaceX.jpg');
+//   const folderName = 'Picture';
+//   if (!fs.existsSync(finalPath)) {
+//     throw new Error('File not found!');
+//   }
+//   let folder = await googleDriveService.searchFolder(folderName).catch((error) => {
+//     console.error(error);
+//     return null;
+//   });
+//   if (!folder) {
+//     folder = await googleDriveService.createFolder(folderName);
+//   }
+//   await googleDriveService.saveFile('SpaceX', finalPath, 'image/jpeg', folder?.id).catch((error) => {
+//     console.error(error);
+//   });
+//   console.info('File uploaded successfully!');
+//   // Delete the file on the server
+//   fs.unlinkSync(finalPath);
+// })();

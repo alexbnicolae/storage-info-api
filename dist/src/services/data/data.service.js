@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteDataService = exports.editDataService = exports.getDataService = void 0;
+exports.copyDataService = exports.deleteDataService = exports.editDataService = exports.getDataService = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const note_schema_1 = __importDefault(require("../../models/Notes/note.schema"));
 const user_schema_1 = __importDefault(require("../../models/Users/user.schema"));
@@ -491,3 +491,133 @@ const deleteDataService = async (data, token) => {
     }
 };
 exports.deleteDataService = deleteDataService;
+const copyDataService = async (data, token) => {
+    const { items, allItemsSelected, newParentId, oldParentId } = data;
+    try {
+        const user = await user_schema_1.default.findOne({ token: token });
+        if (!allItemsSelected) {
+            let folders = items
+                .filter(f => f.type === folder_content_enum_1.FolderContentEnum.Folder && f.id != newParentId)
+                .map(m => m.id);
+            let foldersToCopy = (await content_schema_1.default.find({
+                user: user === null || user === void 0 ? void 0 : user._id,
+                parentId: oldParentId,
+                _id: {
+                    $in: folders
+                }
+            })).map(m => ({
+                user: user === null || user === void 0 ? void 0 : user._id,
+                name: m.name,
+                type: m.type,
+                parentId: newParentId,
+                content: m.content,
+                excrypted: m.encrypted,
+                folderPassword: m.folderPassword,
+                isDuplicate: true
+            }));
+            let wordFiles = items
+                .filter(f => f.type === folder_content_enum_1.FolderContentEnum.File)
+                .map(m => m.id);
+            let wordFilesToCopy = (await wordfile_schema_1.default.find({
+                user: user === null || user === void 0 ? void 0 : user._id,
+                parentId: oldParentId,
+                _id: {
+                    $in: wordFiles
+                }
+            })).map(m => ({
+                user: user === null || user === void 0 ? void 0 : user._id,
+                name: m.name,
+                type: m.type,
+                parentId: newParentId,
+                content: m.content,
+                excrypted: m.encrypted,
+                folderPassword: m.folderPassword,
+                isDuplicate: true
+            }));
+            let notes = items
+                .filter(f => f.type === folder_content_enum_1.FolderContentEnum.Note)
+                .map(m => m.id);
+            let notesToCopy = (await note_schema_1.default.find({
+                user: user === null || user === void 0 ? void 0 : user._id,
+                parentId: oldParentId,
+                _id: {
+                    $in: notes
+                }
+            })).map(m => ({
+                user: user === null || user === void 0 ? void 0 : user._id,
+                name: m.name,
+                type: m.type,
+                parentId: newParentId,
+                content: m.content,
+                excrypted: m.encrypted,
+                folderPassword: m.folderPassword,
+                isDuplicate: true
+            }));
+            let respFolders = await content_schema_1.default.insertMany(foldersToCopy);
+            let respWordFiles = await wordfile_schema_1.default.insertMany(wordFilesToCopy);
+            let respNotes = await note_schema_1.default.insertMany(notesToCopy);
+        }
+        else {
+            // debugger;
+            let folders = items
+                .filter(f => f.type === folder_content_enum_1.FolderContentEnum.Folder)
+                .map(m => m.id);
+            let foldersToCopy = (await content_schema_1.default.find({
+                user: user === null || user === void 0 ? void 0 : user._id,
+                parentId: oldParentId,
+                _id: {
+                    $nin: folders
+                }
+            })).map(m => ({
+                name: m.name,
+                type: m.type,
+                parentId: newParentId,
+                content: m.content,
+                excrypted: m.encrypted,
+                folderPassword: m.folderPassword
+            }));
+            let wordFiles = items
+                .filter(f => f.type === folder_content_enum_1.FolderContentEnum.File)
+                .map(m => m.id);
+            let wordFilesToCopy = (await wordfile_schema_1.default.find({
+                user: user === null || user === void 0 ? void 0 : user._id,
+                parentId: oldParentId,
+                _id: {
+                    $nin: wordFiles
+                }
+            })).map(m => ({
+                name: m.name,
+                type: m.type,
+                parentId: newParentId,
+                content: m.content,
+                excrypted: m.encrypted,
+                folderPassword: m.folderPassword
+            }));
+            let notes = items
+                .filter(f => f.type === folder_content_enum_1.FolderContentEnum.Note)
+                .map(m => m.id);
+            let notesToCopy = (await note_schema_1.default.find({
+                user: user === null || user === void 0 ? void 0 : user._id,
+                parentId: oldParentId,
+                _id: {
+                    $nin: notes
+                }
+            })).map(m => ({
+                name: m.name,
+                type: m.type,
+                parentId: newParentId,
+                content: m.content,
+                excrypted: m.encrypted,
+                folderPassword: m.folderPassword
+            }));
+            let respFolders = await content_schema_1.default.insertMany(foldersToCopy);
+            let respWordFiles = await wordfile_schema_1.default.insertMany(wordFilesToCopy);
+            let respNotes = await note_schema_1.default.insertMany(notesToCopy);
+        }
+        return 200;
+    }
+    catch (error) {
+        return 400;
+    }
+};
+exports.copyDataService = copyDataService;

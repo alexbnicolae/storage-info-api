@@ -7,5 +7,6 @@ export type ContentSchemaDto = {
     name: string,
     type: FolderContentEnum,
     parentId: string | null | ObjectId,
-    content?: any[]
+    content?: any[],
+    isDuplicate?: boolean
 }

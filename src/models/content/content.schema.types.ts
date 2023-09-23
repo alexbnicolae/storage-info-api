@@ -9,5 +9,6 @@ export type ContentSchemaDto = {
     parentId: string | null | ObjectId,
     content?: {},
     encrypted?: boolean
-    folderPassword?: string
+    folderPassword?: string,
+    isDuplicate?: boolean
 }

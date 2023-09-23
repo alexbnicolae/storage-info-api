@@ -12,9 +12,9 @@ const createWordFileService = async (data, token) => {
     try {
         const user = await user_schema_1.default.findOne({ token: token });
         if (data.parentId !== null)
-            dataContent = Object.assign(Object.assign({}, data), { user: user === null || user === void 0 ? void 0 : user._id, parentId: new mongoose_1.default.Types.ObjectId(data.parentId) });
+            dataContent = Object.assign(Object.assign({}, data), { user: user === null || user === void 0 ? void 0 : user._id, parentId: new mongoose_1.default.Types.ObjectId(data.parentId), isDuplicate: false });
         else
-            dataContent = Object.assign(Object.assign({}, data), { user: user === null || user === void 0 ? void 0 : user._id });
+            dataContent = Object.assign(Object.assign({}, data), { user: user === null || user === void 0 ? void 0 : user._id, isDuplicate: false });
         let newFolder = await wordfile_schema_1.default.create(dataContent);
         newFolder.save();
         return 200;

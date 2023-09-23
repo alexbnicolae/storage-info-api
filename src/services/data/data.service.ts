@@ -563,3 +563,148 @@ export const deleteDataService = async(data: any, token: string) => {
         return 400;
     }
 }
+
+export const copyDataService = async(data: any, token: string) => {
+
+    const { items, allItemsSelected, newParentId, oldParentId } = data;
+    
+    try {
+        const user = await User.findOne({token: token});
+
+        if(!allItemsSelected) {
+            let folders = (items as EditModeItemType[])
+                .filter(f => f.type === FolderContentEnum.Folder && f.id != newParentId)
+                .map(m => m.id)
+            
+            let foldersToCopy= (await Content.find({
+                user: user?._id,
+                parentId: oldParentId,
+                _id: {
+                    $in: folders
+                }
+            })).map(m => ({
+                user: user?._id,
+                name: m.name,
+                type: m.type,
+                parentId: newParentId,
+                content: m.content,
+                excrypted: m.encrypted,
+                folderPassword: m.folderPassword,
+                isDuplicate: true
+            }))
+
+            let wordFiles = (items as EditModeItemType[])
+                .filter(f => f.type === FolderContentEnum.File)
+                .map(m => m.id)
+    
+            let wordFilesToCopy = (await Wordfile.find({
+                user: user?._id,
+                parentId: oldParentId,
+                _id: {
+                    $in: wordFiles
+                }
+            })).map(m => ({
+                user: user?._id,
+                name: m.name,
+                type: m.type,
+                parentId: newParentId,
+                content: m.content,
+                excrypted: m.encrypted,
+                folderPassword: m.folderPassword,
+                isDuplicate: true
+            }))
+
+            let notes = (items as EditModeItemType[])
+                .filter(f => f.type === FolderContentEnum.Note)
+                .map(m => m.id)
+            
+            let notesToCopy = (await Note.find({
+                user: user?._id,
+                parentId: oldParentId,
+                _id: {
+                    $in: notes
+                }
+            })).map(m => ({
+                user: user?._id,
+                name: m.name,
+                type: m.type,
+                parentId: newParentId,
+                content: m.content,
+                excrypted: m.encrypted,
+                folderPassword: m.folderPassword,
+                isDuplicate: true
+            }))
+
+            let respFolders = await Content.insertMany(foldersToCopy as any[]);
+            let respWordFiles = await Wordfile.insertMany(wordFilesToCopy as any[]);
+            let respNotes = await Note.insertMany(notesToCopy as any[]);
+    
+        } else {
+            // debugger;
+            let folders = (items as EditModeItemType[])
+                .filter(f => f.type === FolderContentEnum.Folder)
+                .map(m => m.id)
+
+            let foldersToCopy = (await Content.find({
+                user: user?._id,
+                parentId: oldParentId,
+                _id: {
+                    $nin: folders
+                }
+            })).map(m => ({
+                name: m.name,
+                type: m.type,
+                parentId: newParentId,
+                content: m.content,
+                excrypted: m.encrypted,
+                folderPassword: m.folderPassword
+            }))
+            
+            let wordFiles = (items as EditModeItemType[])
+                .filter(f => f.type === FolderContentEnum.File)
+                .map(m => m.id)
+
+            let wordFilesToCopy = (await Wordfile.find({
+                    user: user?._id,
+                    parentId: oldParentId,
+                    _id: {
+                        $nin: wordFiles
+                    }
+                })).map(m => ({
+                    name: m.name,
+                    type: m.type,
+                    parentId: newParentId,
+                    content: m.content,
+                    excrypted: m.encrypted,
+                    folderPassword: m.folderPassword
+                }))
+    
+            let notes = (items as EditModeItemType[])
+                .filter(f => f.type === FolderContentEnum.Note)
+                .map(m => m.id)
+
+            let notesToCopy = (await Note.find({
+                    user: user?._id,
+                    parentId: oldParentId,
+                    _id: {
+                        $nin: notes
+                    }
+                })).map(m => ({
+                    name: m.name,
+                    type: m.type,
+                    parentId: newParentId,
+                    content: m.content,
+                    excrypted: m.encrypted,
+                    folderPassword: m.folderPassword
+                }))
+
+                let respFolders = await Content.insertMany(foldersToCopy as any[]);
+                let respWordFiles = await Wordfile.insertMany(wordFilesToCopy as any[]);
+                let respNotes = await Note.insertMany(notesToCopy as any[]);
+        }
+
+        return 200;
+    } catch (error) {
+        return 400;
+    }
+}

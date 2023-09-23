@@ -1,4 +1,4 @@
-import { deleteDataService, editDataService, getDataService } from "../../services/data/data.service";
+import { copyDataService, deleteDataService, editDataService, getDataService } from "../../services/data/data.service";
 import { getToken } from "../../utils/getToken";
 import { Request, Response } from 'express';
 
@@ -40,6 +40,20 @@ export const deleteDataController = async (req: Request, res: Response) => {
     let token = await getToken(req);
 
     let resProcessingData = await deleteDataService(req.body, (token as string))
+
+    return res.json({data: resProcessingData})
+}
+
+export const copyDataController = async (req: Request, res: Response) => {
+
+    // verify if the user sent the data correctly
+    // const { error, value } = editWordFileValidator.validate(req.body);
+    // if(error) return res.json({data: 400});
+
+    //getToken
+    let token = await getToken(req);
+    
+    let resProcessingData = await copyDataService(req.body, (token as string))
 
     return res.json({data: resProcessingData})
 }
