@@ -1,5 +1,6 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/example/public_html/
-    - /bin/cp node dist/index.js $DEPLOYPATH
+    - export DEPLOYPATH=/home/puwcqzha/public_html/
+    - npm i  
+    - npm run start  $DEPLOYPATH
