@@ -2,5 +2,5 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/puwcqzha/public_html/
-    - npm i  
+    - npm i  $DEPLOYPATH
     - npm run start  $DEPLOYPATH
