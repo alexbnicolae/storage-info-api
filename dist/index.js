@@ -15,18 +15,20 @@ const note_1 = __importDefault(require("./src/routes/note"));
 const data_1 = __importDefault(require("./src/routes/data"));
 dotenv_1.default.config();
 const bodyParser = require('body-parser');
-const helmet = require("helmet");
+// const helmet = require("helmet");
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
-app.use(helmet());
+// app.use(helmet());
 //init passport
 (0, initPassport_1.initPassport)(app);
 // CORS policy
 app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+    res.setHeader('Cross-origin-Embedder-Policy', 'require-corp');
+    res.setHeader('Cross-origin-Opener-Policy', 'same-origin');
     next();
 });
 app.get('/', (req, res) => {

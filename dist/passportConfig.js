@@ -7,13 +7,13 @@ exports.facebook = {
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET,
     //todo: based on env, change url to localhost, dev or prod
-    callbackURL: "https://data-wallet-server.herokuapp.com/user/login/facebook/callback",
+    callbackURL: `${process.env.LOGIN_URL}/user/login/facebook/callback`,
 };
 exports.google = {
     clientID: process.env.GMAIL_APP_ID,
     clientSecret: process.env.GMAIL_APP_SECRET,
     //todo: based on env, change url to localhost, dev or prod
-    callbackURL: "https://data-wallet-server.herokuapp.com/user/login/google/callback",
+    callbackURL: `${process.env.LOGIN_URL}/user/login/google/callback`,
 };
 // export const google: any = {
 //   clientID: process.env.GMAIL_APP_ID,
@@ -24,6 +24,6 @@ exports.google = {
 exports.github = {
     clientID: (_a = process.env.GITHUB_APP_ID) !== null && _a !== void 0 ? _a : '',
     clientSecret: (_b = process.env.GITHUB_APP_SECRET) !== null && _b !== void 0 ? _b : '',
-    callbackURL: "https://data-wallet-server.herokuapp.com/user/login/github/callback",
+    callbackURL: `${process.env.LOGIN_URL}/user/login/github/callback`,
     scope: ['user:email']
 };
