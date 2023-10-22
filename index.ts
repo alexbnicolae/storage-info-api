@@ -12,12 +12,12 @@ import dataRouter from './src/routes/data';
 dotenv.config();
 
 const bodyParser = require('body-parser');
-const helmet = require("helmet");
+// const helmet = require("helmet");
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
-app.use(helmet());
+// app.use(helmet());
 //init passport
 initPassport(app);
 
