@@ -1,6 +1,5 @@
 ---
 deployment:
-  tasks:
-    - export DEPLOYPATH=/home/puwcqzha/repositories/storage-info-api 
-    - npm i  $DEPLOYPATH
-    - npm run start  $DEPLOYPATH
+  tasks: 
+    - npm i 
+    - npm run start 
