@@ -13,12 +13,17 @@ const wordfile_1 = __importDefault(require("./src/routes/wordfile"));
 const user_1 = __importDefault(require("./src/routes/user"));
 const note_1 = __importDefault(require("./src/routes/note"));
 const data_1 = __importDefault(require("./src/routes/data"));
+const express_fileupload_1 = __importDefault(require("express-fileupload"));
+const path_1 = __importDefault(require("path"));
 dotenv_1.default.config();
-const bodyParser = require('body-parser');
+const filesPayloadExists = require('./middleware/filesPayloadExists');
+const fileExtLimiter = require('./middleware/fileExtLimiter');
+const fileSizeLimiter = require('./middleware/fileSizeLimiter');
+const body_parser_1 = __importDefault(require("body-parser"));
 // const helmet = require("helmet");
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
-app.use(bodyParser.json());
+app.use(body_parser_1.default.json());
 // app.use(helmet());
 //init passport
 (0, initPassport_1.initPassport)(app);
@@ -47,3 +52,23 @@ app.use('/wordfile', wordfile_1.default);
 app.use('/note', note_1.default);
 app.use('/user', user_1.default);
 app.use('/data', data_1.default);
+app.post('/upload', (0, express_fileupload_1.default)({
+    createParentPath: true,
+    useTempFiles: true,
+}), 
+// filesPayloadExists,
+// fileExtLimiter(['.png', '.jpg', '.jpeg']),
+// fileSizeLimiter,
+(req, res) => {
+    let paths = [];
+    const files = req.files;
+    Object.keys(files).forEach(key => {
+        const filepath = path_1.default.join(__dirname, 'files', files[key].name);
+        paths.push(filepath);
+        files[key].mv(filepath, (err) => {
+            if (err)
+                return res.status(500).json({ status: "error", message: err });
+        });
+    });
+    return res.json({ status: 'success', message: paths });
+});
