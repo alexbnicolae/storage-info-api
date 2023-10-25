@@ -63,4 +63,5 @@ app.use('/user', userRouter);
 app.use('/data', dataRouter);
 app.use('/gallery', galleryRouter);
  
-export let rootPath = path.join(__dirname, 'files');
+// export let rootPath = path.join(__dirname, 'files');
+export let rootPath = "/home/puwcqzha/public_html/";
