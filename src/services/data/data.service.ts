@@ -5,7 +5,11 @@ import Wordfile from "../../models/WordFiles/wordfile.schema";
 import Content from "../../models/content/content.schema";
 import { FolderContentEnum } from "../../utils/enums/folder-content.enum";
 import { NoteTypeEnum } from "../../utils/enums/note-type.enum";
-import { debug } from "console";
+import Gallery from "../../models/Gallery/gallery.schema";
+import path from "path";
+import { rootPath } from "../../..";
+import fs from "fs";
+
 
 export type EditModeItemType = {
     id?: string,
@@ -418,6 +422,58 @@ export const deleteDataService = async(data: any, token: string) => {
                 }
             });
 
+            
+            if(notes.length > 0) {
+                let getNotes: any[] = [];
+
+                getNotes = (await Note.find({
+                    user: user?._id,
+                    parentId: parentId,
+                    _id: {
+                        $in: notes.map(m => m.id)
+                    }
+                }))
+                .map(m => m.content) 
+                .reduce(
+                    (prev: any, current) => [...prev, ...current], []
+                )     
+                .filter((f: any) => [NoteTypeEnum.Image, NoteTypeEnum.Video].includes(f.type))
+
+                let allContent = [
+                    ...getNotes.map((m: any) => m.content).filter(f => f),
+                    ...getNotes.map((m: any) => m.additional).filter(f => f)
+                ];
+
+                allContent = allContent.map(content => {
+                    if(!(typeof content === 'string'))
+                        return {
+                            id: content?.id,
+                            name: content?.fileName
+                        };
+                    return null
+                })
+                .filter(f => f !== null);
+
+                if(allContent.length > 0){
+                    let deleteGallery = allContent.map(m => {
+                        return {
+                            deleteOne: {
+                                filter: {
+                                    _id: m.id
+                                }
+                            }
+                        }
+                    })
+    
+                    await Gallery.bulkWrite(deleteGallery as any[]);
+
+                    allContent.map(m => {
+                        const pathFileToDelete = path.join(rootPath, m?.name ?? "");
+                        fs.unlink(pathFileToDelete, (err) => {})
+                    })
+                }
+            }
+
             let deleteNotes = notes.map(m => {
                 return {
                     deleteOne: {
@@ -501,6 +557,57 @@ export const deleteDataService = async(data: any, token: string) => {
             let notes = (items as EditModeItemType[])
                 .filter(f => f.type === FolderContentEnum.Note)
                 .map(m => m.id)
+
+            if(notes.length > 0) {
+                let getNotes: any[] = [];
+
+                getNotes = (await Note.find({
+                    user: user?._id,
+                    parentId: parentId,
+                    _id: {
+                        $nin: notes
+                    }
+                }))
+                .map(m => m.content) 
+                .reduce(
+                    (prev: any, current) => [...prev, ...current], []
+                )     
+                .filter((f: any) => [NoteTypeEnum.Image, NoteTypeEnum.Video].includes(f.type))
+
+                let allContent = [
+                    ...getNotes.map((m: any) => m.content).filter(f => f),
+                    ...getNotes.map((m: any) => m.additional).filter(f => f)
+                ];
+
+                allContent = allContent.map(content => {
+                    if(!(typeof content === 'string'))
+                        return {
+                            id: content?.id,
+                            name: content?.fileName
+                        };
+                    return null
+                })
+                .filter(f => f !== null);
+
+                if(allContent.length > 0){
+                    let deleteGallery = allContent.map(m => {
+                        return {
+                            deleteOne: {
+                                filter: {
+                                    _id: m.id
+                                }
+                            }
+                        }
+                    })
+
+                    await Gallery.bulkWrite(deleteGallery as any[]);
+
+                    allContent.map(m => {
+                        const pathFileToDelete = path.join(rootPath, m?.name ?? "");
+                        fs.unlink(pathFileToDelete, (err) => {})
+                    })
+                }
+            }
 
             let notesToDelete = (await Note.find({
                     user: user?._id,

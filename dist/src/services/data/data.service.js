@@ -11,6 +11,10 @@ const wordfile_schema_1 = __importDefault(require("../../models/WordFiles/wordfi
 const content_schema_1 = __importDefault(require("../../models/content/content.schema"));
 const folder_content_enum_1 = require("../../utils/enums/folder-content.enum");
 const note_type_enum_1 = require("../../utils/enums/note-type.enum");
+const gallery_schema_1 = __importDefault(require("../../models/Gallery/gallery.schema"));
+const path_1 = __importDefault(require("path"));
+const __1 = require("../../..");
+const fs_1 = __importDefault(require("fs"));
 const getDataService = async (data, token) => {
     const { pageIndex, pageSize, parentId, folderContentFilter, searchFilter } = data;
     let dataToSkip = pageSize * (pageIndex - 1);
@@ -369,6 +373,49 @@ const deleteDataService = async (data, token) => {
                     }
                 };
             });
+            if (notes.length > 0) {
+                let getNotes = [];
+                getNotes = (await note_schema_1.default.find({
+                    user: user === null || user === void 0 ? void 0 : user._id,
+                    parentId: parentId,
+                    _id: {
+                        $in: notes.map(m => m.id)
+                    }
+                }))
+                    .map(m => m.content)
+                    .reduce((prev, current) => [...prev, ...current], [])
+                    .filter((f) => [note_type_enum_1.NoteTypeEnum.Image, note_type_enum_1.NoteTypeEnum.Video].includes(f.type));
+                let allContent = [
+                    ...getNotes.map((m) => m.content).filter(f => f),
+                    ...getNotes.map((m) => m.additional).filter(f => f)
+                ];
+                allContent = allContent.map(content => {
+                    if (!(typeof content === 'string'))
+                        return {
+                            id: content === null || content === void 0 ? void 0 : content.id,
+                            name: content === null || content === void 0 ? void 0 : content.fileName
+                        };
+                    return null;
+                })
+                    .filter(f => f !== null);
+                if (allContent.length > 0) {
+                    let deleteGallery = allContent.map(m => {
+                        return {
+                            deleteOne: {
+                                filter: {
+                                    _id: m.id
+                                }
+                            }
+                        };
+                    });
+                    await gallery_schema_1.default.bulkWrite(deleteGallery);
+                    allContent.map(m => {
+                        var _a;
+                        const pathFileToDelete = path_1.default.join(__1.rootPath, (_a = m === null || m === void 0 ? void 0 : m.name) !== null && _a !== void 0 ? _a : "");
+                        fs_1.default.unlink(pathFileToDelete, (err) => { });
+                    });
+                }
+            }
             let deleteNotes = notes.map(m => {
                 return {
                     deleteOne: {
@@ -437,6 +484,49 @@ const deleteDataService = async (data, token) => {
             let notes = items
                 .filter(f => f.type === folder_content_enum_1.FolderContentEnum.Note)
                 .map(m => m.id);
+            if (notes.length > 0) {
+                let getNotes = [];
+                getNotes = (await note_schema_1.default.find({
+                    user: user === null || user === void 0 ? void 0 : user._id,
+                    parentId: parentId,
+                    _id: {
+                        $nin: notes
+                    }
+                }))
+                    .map(m => m.content)
+                    .reduce((prev, current) => [...prev, ...current], [])
+                    .filter((f) => [note_type_enum_1.NoteTypeEnum.Image, note_type_enum_1.NoteTypeEnum.Video].includes(f.type));
+                let allContent = [
+                    ...getNotes.map((m) => m.content).filter(f => f),
+                    ...getNotes.map((m) => m.additional).filter(f => f)
+                ];
+                allContent = allContent.map(content => {
+                    if (!(typeof content === 'string'))
+                        return {
+                            id: content === null || content === void 0 ? void 0 : content.id,
+                            name: content === null || content === void 0 ? void 0 : content.fileName
+                        };
+                    return null;
+                })
+                    .filter(f => f !== null);
+                if (allContent.length > 0) {
+                    let deleteGallery = allContent.map(m => {
+                        return {
+                            deleteOne: {
+                                filter: {
+                                    _id: m.id
+                                }
+                            }
+                        };
+                    });
+                    await gallery_schema_1.default.bulkWrite(deleteGallery);
+                    allContent.map(m => {
+                        var _a;
+                        const pathFileToDelete = path_1.default.join(__1.rootPath, (_a = m === null || m === void 0 ? void 0 : m.name) !== null && _a !== void 0 ? _a : "");
+                        fs_1.default.unlink(pathFileToDelete, (err) => { });
+                    });
+                }
+            }
             let notesToDelete = (await note_schema_1.default.find({
                 user: user === null || user === void 0 ? void 0 : user._id,
                 parentId: parentId,

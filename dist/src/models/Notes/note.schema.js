@@ -4,7 +4,7 @@ const mongoose_1 = require("mongoose");
 // Define schema for note content
 const noteContentSchema = new mongoose_1.Schema({
     content: {
-        type: String,
+        type: mongoose_1.Schema.Types.Mixed,
         required: false
     },
     type: {
@@ -13,6 +13,11 @@ const noteContentSchema = new mongoose_1.Schema({
     },
     additional: {
         type: mongoose_1.Schema.Types.Mixed,
+        required: false
+    },
+    gallery: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'Gallery',
         required: false
     },
 });

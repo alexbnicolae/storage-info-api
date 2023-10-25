@@ -4,7 +4,7 @@ import { model, models, Schema } from 'mongoose';
 
 const noteContentSchema = new Schema({
     content: {
-        type: String,
+        type: Schema.Types.Mixed,
         required: false
     },
     type: {
@@ -13,6 +13,11 @@ const noteContentSchema = new Schema({
     },
     additional: {
         type: Schema.Types.Mixed,
+        required: false
+    },
+    gallery: {
+        type: Schema.Types.ObjectId,
+        ref: 'Gallery',
         required: false
     },
 

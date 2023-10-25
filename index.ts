@@ -8,22 +8,23 @@ import wordfileRouter from './src/routes/wordfile';
 import userRouter from './src/routes/user';
 import noteRouter from './src/routes/note';
 import dataRouter from './src/routes/data';
-import fileUpload from "express-fileupload";
 import path from "path";
-
-dotenv.config();
-
 const filesPayloadExists = require('./middleware/filesPayloadExists');
 const fileExtLimiter = require('./middleware/fileExtLimiter');
 const fileSizeLimiter = require('./middleware/fileSizeLimiter');
+
+dotenv.config();
+
 import fs from "fs";
 
 import bodyParser from 'body-parser';
+import galleryRouter from './src/routes/gallery';
 // const helmet = require("helmet");
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'files')));
 // app.use(helmet());
 //init passport
 initPassport(app);
@@ -60,28 +61,6 @@ app.use('/wordfile', wordfileRouter);
 app.use('/note', noteRouter);
 app.use('/user', userRouter);
 app.use('/data', dataRouter);
+app.use('/gallery', galleryRouter);
  
-app.post('/upload',
-    fileUpload({ 
-      createParentPath: true,
-      useTempFiles: true,
-    }),
-    // filesPayloadExists,
-    // fileExtLimiter(['.png', '.jpg', '.jpeg']),
-    // fileSizeLimiter,
-    (req: any, res: any) => {
-      let paths: any[] = [];
-
-      const files = req.files
-      Object.keys(files).forEach(key => {
-        const filepath = path.join(__dirname, 'files', files[key].name);
-        debugger;
-        paths.push(`http://${req.headers.host}/${files[key].name}`)
-        files[key].mv(filepath, (err: any) => {
-            if (err) return res.status(500).json({ status: "error", message: err })
-        })
-      })
-        
-      return res.json({ status: 'success', message: paths })
-    }
-)
+export let rootPath = path.join(__dirname, 'files');
