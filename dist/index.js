@@ -55,5 +55,5 @@ app.use('/note', note_1.default);
 app.use('/user', user_1.default);
 app.use('/data', data_1.default);
 app.use('/gallery', gallery_1.default);
-// export let rootPath = path.join(__dirname, 'files');
-exports.rootPath = "/home/puwcqzha/public_html/";
+exports.rootPath = path_1.default.join(__dirname, 'files');
+// export let rootPath = "/home/puwcqzha/public_html/";
