@@ -3,10 +3,6 @@ import { Schema, model } from "mongoose";
 // Define a schema
 const gallerySchema = new Schema(
     {
-        fullPath: {
-            type: String,
-            required: true
-        },
         fileName: {
             type: String,
             required: true

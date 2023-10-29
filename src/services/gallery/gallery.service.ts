@@ -18,7 +18,6 @@ export const createGalleryService = async (req: any, token: string) => {
             const filepath = path.join(rootPath, files[key].name);
 
             let file = {
-                fullPath: `https://${req.headers.host}/${files[key].name}`,
                 fileName: files[key].name,
                 type: files[key].mimetype.includes("image") ? NoteTypeEnum.Image : NoteTypeEnum.Video
             }
@@ -29,7 +28,7 @@ export const createGalleryService = async (req: any, token: string) => {
                 if (err) return 500;
             })
         })
-
+        
         let newReturnFiles: any[] = [];
         for(let i = 0; i < returnFiles.length; i++) {
             let file = returnFiles[i];

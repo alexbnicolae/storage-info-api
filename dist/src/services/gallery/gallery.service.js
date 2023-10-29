@@ -19,7 +19,6 @@ const createGalleryService = async (req, token) => {
             var _a;
             const filepath = path_1.default.join(__1.rootPath, files[key].name);
             let file = {
-                fullPath: `https://${req.headers.host}/${files[key].name}`,
                 fileName: files[key].name,
                 type: files[key].mimetype.includes("image") ? note_type_enum_1.NoteTypeEnum.Image : note_type_enum_1.NoteTypeEnum.Video
             };
