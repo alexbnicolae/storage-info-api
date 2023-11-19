@@ -11,6 +11,8 @@ export const getDataController = async (req: Request, res: Response) => {
     //getToken
     let token = await getToken(req);
     let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
+    if((req.headers["platform"] as string).toLowerCase().includes("mobile"))
+        isMobile = true;
     
     let resProcessingData = await getDataService(req.body, (token as string), isMobile)
 
@@ -26,6 +28,8 @@ export const editDataController = async (req: Request, res: Response) => {
     //getToken
     let token = await getToken(req);
     let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
+    if((req.headers["platform"] as string).toLowerCase().includes("mobile"))
+        isMobile = true;
     
     let resProcessingData = await editDataService(req.body, (token as string), isMobile)
 
@@ -41,6 +45,8 @@ export const deleteDataController = async (req: Request, res: Response) => {
     //getToken
     let token = await getToken(req);
     let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
+    if((req.headers["platform"] as string).toLowerCase().includes("mobile"))
+        isMobile = true;
 
     let resProcessingData = await deleteDataService(req.body, (token as string), isMobile)
 

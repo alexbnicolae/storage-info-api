@@ -12,6 +12,8 @@ const createWordFileController = async (req, res) => {
     //getToken
     let token = await (0, getToken_1.getToken)(req);
     let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
+    if (req.headers["platform"].toLowerCase().includes("mobile"))
+        isMobile = true;
     // process data
     let resProcessingData = await (0, wordfile_service_1.createWordFileService)(req.body, token, isMobile);
     return res.json({ data: resProcessingData });
@@ -21,6 +23,8 @@ const getWordFileController = async (req, res) => {
     //getToken
     let token = await (0, getToken_1.getToken)(req);
     let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
+    if (req.headers["platform"].toLowerCase().includes("mobile"))
+        isMobile = true;
     let resProcessingData = await (0, wordfile_service_1.getWordFileService)(req.body.parentId, token, isMobile);
     return res.json({ data: resProcessingData });
 };
@@ -33,6 +37,8 @@ const editWordFileController = async (req, res) => {
     //getToken
     let token = await (0, getToken_1.getToken)(req);
     let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
+    if (req.headers["platform"].toLowerCase().includes("mobile"))
+        isMobile = true;
     let resProcessingData = await (0, wordfile_service_1.editWordFileService)(req.body, token, isMobile);
     return res.json({ data: resProcessingData });
 };

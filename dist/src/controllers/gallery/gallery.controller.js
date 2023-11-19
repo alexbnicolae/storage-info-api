@@ -10,6 +10,8 @@ const createGalleryController = async (req, res) => {
     //getToken
     let token = await (0, getToken_1.getToken)(req);
     let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
+    if (req.headers["platform"].toLowerCase().includes("mobile"))
+        isMobile = true;
     // process data
     let resProcessingData = await (0, gallery_service_1.createGalleryService)(req, token, isMobile);
     return res.json({ data: resProcessingData });

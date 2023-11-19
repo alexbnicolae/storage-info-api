@@ -7,6 +7,8 @@ const getUserController = async (req, res) => {
     //getToken
     let token = await (0, getToken_1.getToken)(req);
     let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
+    if (req.headers["platform"].toLowerCase().includes("mobile"))
+        isMobile = true;
     let resProcessingData = await (0, user_service_1.getUserService)(token, isMobile);
     return res.json({ data: resProcessingData });
 };
@@ -15,6 +17,8 @@ const editUserController = async (req, res) => {
     //getToken
     let token = await (0, getToken_1.getToken)(req);
     let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
+    if (req.headers["platform"].toLowerCase().includes("mobile"))
+        isMobile = true;
     let resProcessingData = await (0, user_service_1.editUserService)(req.body, token, isMobile);
     return res.json({ data: resProcessingData });
 };

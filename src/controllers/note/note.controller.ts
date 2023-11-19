@@ -11,6 +11,8 @@ export const createNoteController = async (req: Request, res: Response) => {
     //getToken
     let token = await getToken(req);
     let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
+    if((req.headers["platform"] as string).toLowerCase().includes("mobile"))
+        isMobile = true;
 
     // process data
     let resProcessingData = await createNoteService(req.body, (token as string), isMobile);
@@ -22,6 +24,8 @@ export const getNotesController = async (req: Request, res: Response) => {
     //getToken
     let token = await getToken(req);
     let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
+    if((req.headers["platform"] as string).toLowerCase().includes("mobile"))
+        isMobile = true;
 
     let resProcessingData = await getNotesService(req.body.parentId, (token as string), isMobile)
 
@@ -44,6 +48,8 @@ export const ediNoteController = async (req: Request, res: Response) => {
     //getToken
     let token = await getToken(req);
     let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
+    if((req.headers["platform"] as string).toLowerCase().includes("mobile"))
+        isMobile = true;
     
     let resProcessingData = await editNoteService(req.body, (token as string), isMobile)
 
