@@ -40,27 +40,39 @@ authRouter.get(
   // Redirect user back to the mobile app using deep linking
   async (req: any, res: any) => {
     let token = createToken(req.user); // token created
-
+   
     let user = await User.findOne({externId: req.user.id});
 
+    let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
+    
     if(!user) {
       await User.findOneAndUpdate({externId: req.user.id}, {
           email: req.user.email,
           name: req.user.name,
           externId: req.user.id?.toString(),
-          token: token,
-          validToken: true,
+          token: isMobile ? token : "",
+          validToken: isMobile ? true : false,
+          tokenNonMobile: !isMobile ? token : "",
+          validTokenNonMobile: !isMobile ? true : false,
           languageId: 0,
           visualMode: VisualModeEnum.Original,
           authPlatform: AuthPlatformEnum.Google
       }, { upsert: true })
     }
     else {
-      await User.findOneAndUpdate({externId: req.user.id}, {
-        token: token
-      })
+      if(isMobile) {
+        await User.findOneAndUpdate({externId: req.user.id}, {
+          token: token,
+          validToken: true
+        })
+      } else {
+        await User.findOneAndUpdate({externId: req.user.id}, {
+          tokenNonMobile: token,
+          validTokenNonMobile: true
+        })
+      }
     }
-
+    
     res.redirect(
       `storageInfoApp://app/login?token=${token}/isUserNew=${!user}`
     );
@@ -97,19 +109,28 @@ authRouter.get('/user/login/github/callback',
     res.redirect(
       `storageInfoApp://app/login?token=${token}/isUserNew=${!user}`
     );
-  });
+});
 
 authRouter.get("/logout", async function (req, res) {
     const token = req?.headers?.authorization?.split(' ')[1];
-    let code = await httpInterceptor(token);
+    
+    let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
+    
+    let code = await httpInterceptor(token, isMobile);
 
     if(code == 401){
         res.json({ code: 401 });
     }
     else {
+      if(isMobile) {
         await User.findOneAndUpdate({token: token}, {
             validToken: false
         })
+      } else {
+        await User.findOneAndUpdate({tokenNonMobile: token}, {
+          validTokenNonMobile: false
+        })
+      }
         res.json({code: 200})
     }
 });

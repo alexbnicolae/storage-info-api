@@ -9,7 +9,8 @@ const getDataController = async (req, res) => {
     // if(error) return res.json({data: 400});
     //getToken
     let token = await (0, getToken_1.getToken)(req);
-    let resProcessingData = await (0, data_service_1.getDataService)(req.body, token);
+    let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
+    let resProcessingData = await (0, data_service_1.getDataService)(req.body, token, isMobile);
     return res.json({ data: resProcessingData });
 };
 exports.getDataController = getDataController;
@@ -19,7 +20,8 @@ const editDataController = async (req, res) => {
     // if(error) return res.json({data: 400});
     //getToken
     let token = await (0, getToken_1.getToken)(req);
-    let resProcessingData = await (0, data_service_1.editDataService)(req.body, token);
+    let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
+    let resProcessingData = await (0, data_service_1.editDataService)(req.body, token, isMobile);
     return res.json({ data: resProcessingData });
 };
 exports.editDataController = editDataController;
@@ -29,7 +31,8 @@ const deleteDataController = async (req, res) => {
     // if(error) return res.json({data: 400});
     //getToken
     let token = await (0, getToken_1.getToken)(req);
-    let resProcessingData = await (0, data_service_1.deleteDataService)(req.body, token);
+    let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
+    let resProcessingData = await (0, data_service_1.deleteDataService)(req.body, token, isMobile);
     return res.json({ data: resProcessingData });
 };
 exports.deleteDataController = deleteDataController;

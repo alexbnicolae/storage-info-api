@@ -1,8 +1,14 @@
 import User from "../../models/Users/user.schema";
 
-export const getUserService = async (token: string) => {
+export const getUserService = async (token: string, isMobile: boolean) => {
     try {
-        const user = await User.findOne({token: token});
+        let user;
+        if(isMobile)
+            user = await User.findOne({token: token});
+        else    
+            user = await User.findOne({tokenNonMobile: token});
+
+        if(user === null) return 400;
 
         return user;
     } catch (error) {
@@ -10,12 +16,22 @@ export const getUserService = async (token: string) => {
     }
 }
 
-export const editUserService = async (data: any, token: string) => {
+export const editUserService = async (data: any, token: string, isMobile: boolean) => {
     try {
-        const user = await User.findOne({token: token});
+        let user;
+        if(isMobile)
+            user = await User.findOne({token: token});
+        else    
+            user = await User.findOne({tokenNonMobile: token});
 
-        if(!!user)
-            await User.findOneAndUpdate({token: token}, data)
+        if(user === null) return 400;
+
+        if(!!user) {
+            if(isMobile)
+                await User.findOneAndUpdate({token: token}, data);
+            else
+                await User.findOneAndUpdate({tokenNonMobile: token}, data);
+        }
 
         return 200;
     } catch (error) {

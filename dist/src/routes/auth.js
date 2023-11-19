@@ -35,22 +35,34 @@ async (req, res) => {
     var _a;
     let token = (0, createToken_1.createToken)(req.user); // token created
     let user = await user_schema_1.default.findOne({ externId: req.user.id });
+    let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
     if (!user) {
         await user_schema_1.default.findOneAndUpdate({ externId: req.user.id }, {
             email: req.user.email,
             name: req.user.name,
             externId: (_a = req.user.id) === null || _a === void 0 ? void 0 : _a.toString(),
-            token: token,
-            validToken: true,
+            token: isMobile ? token : "",
+            validToken: isMobile ? true : false,
+            tokenNonMobile: !isMobile ? token : "",
+            validTokenNonMobile: !isMobile ? true : false,
             languageId: 0,
             visualMode: visual_mode_enum_1.VisualModeEnum.Original,
             authPlatform: auth_platform_enum_1.AuthPlatformEnum.Google
         }, { upsert: true });
     }
     else {
-        await user_schema_1.default.findOneAndUpdate({ externId: req.user.id }, {
-            token: token
-        });
+        if (isMobile) {
+            await user_schema_1.default.findOneAndUpdate({ externId: req.user.id }, {
+                token: token,
+                validToken: true
+            });
+        }
+        else {
+            await user_schema_1.default.findOneAndUpdate({ externId: req.user.id }, {
+                tokenNonMobile: token,
+                validTokenNonMobile: true
+            });
+        }
     }
     res.redirect(`storageInfoApp://app/login?token=${token}/isUserNew=${!user}`);
 });
@@ -80,14 +92,22 @@ authRouter.get('/user/login/github/callback', passport_1.default.authenticate('g
 authRouter.get("/logout", async function (req, res) {
     var _a, _b;
     const token = (_b = (_a = req === null || req === void 0 ? void 0 : req.headers) === null || _a === void 0 ? void 0 : _a.authorization) === null || _b === void 0 ? void 0 : _b.split(' ')[1];
-    let code = await (0, httpInterceptor_1.httpInterceptor)(token);
+    let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
+    let code = await (0, httpInterceptor_1.httpInterceptor)(token, isMobile);
     if (code == 401) {
         res.json({ code: 401 });
     }
     else {
-        await user_schema_1.default.findOneAndUpdate({ token: token }, {
-            validToken: false
-        });
+        if (isMobile) {
+            await user_schema_1.default.findOneAndUpdate({ token: token }, {
+                validToken: false
+            });
+        }
+        else {
+            await user_schema_1.default.findOneAndUpdate({ tokenNonMobile: token }, {
+                validTokenNonMobile: false
+            });
+        }
         res.json({ code: 200 });
     }
 });

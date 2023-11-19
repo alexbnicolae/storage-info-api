@@ -19,13 +19,13 @@ import fs from "fs";
 
 import bodyParser from 'body-parser';
 import galleryRouter from './src/routes/gallery';
-// const helmet = require("helmet");
+const helmet = require("helmet");
 const app: Express = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'files')));
-// app.use(helmet());
+app.use(helmet());
 //init passport
 initPassport(app);
 

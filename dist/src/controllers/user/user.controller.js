@@ -6,14 +6,16 @@ const getToken_1 = require("../../utils/getToken");
 const getUserController = async (req, res) => {
     //getToken
     let token = await (0, getToken_1.getToken)(req);
-    let resProcessingData = await (0, user_service_1.getUserService)(token);
+    let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
+    let resProcessingData = await (0, user_service_1.getUserService)(token, isMobile);
     return res.json({ data: resProcessingData });
 };
 exports.getUserController = getUserController;
 const editUserController = async (req, res) => {
     //getToken
     let token = await (0, getToken_1.getToken)(req);
-    let resProcessingData = await (0, user_service_1.editUserService)(req.body, token);
+    let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
+    let resProcessingData = await (0, user_service_1.editUserService)(req.body, token, isMobile);
     return res.json({ data: resProcessingData });
 };
 exports.editUserController = editUserController;

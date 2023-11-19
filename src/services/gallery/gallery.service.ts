@@ -5,10 +5,15 @@ import { NoteTypeEnum } from "../../utils/enums/note-type.enum";
 import { rootPath } from "../../..";
 import fs from "fs";
 
-export const createGalleryService = async (req: any, token: string) => {
+export const createGalleryService = async (req: any, token: string, isMobile: boolean) => {
 
     try {
-        const user = await User.findOne({token: token});
+        let user;
+        if(isMobile) {
+            user = await User.findOne({token: token});
+        } else {
+            user = await User.findOne({tokenNonMobile: token});
+        }
 
         let returnFiles: any[] = [];
 

@@ -15,14 +15,19 @@ const gallery_schema_1 = __importDefault(require("../../models/Gallery/gallery.s
 const path_1 = __importDefault(require("path"));
 const __1 = require("../../..");
 const fs_1 = __importDefault(require("fs"));
-const getDataService = async (data, token) => {
+const getDataService = async (data, token, isMobile) => {
     const { pageIndex, pageSize, parentId, folderContentFilter, searchFilter } = data;
     let dataToSkip = pageSize * (pageIndex - 1);
     let dataLengthToReturn = pageSize;
     let returnData = [];
-    // debugger;
     try {
-        const user = await user_schema_1.default.findOne({ token: token });
+        let user;
+        if (isMobile)
+            user = await user_schema_1.default.findOne({ token: token });
+        else
+            user = await user_schema_1.default.findOne({ tokenNonMobile: token });
+        if (user === null)
+            return 400;
         let parentIdConverted;
         if (parentId !== null)
             parentIdConverted = new mongoose_1.default.Types.ObjectId(parentId);
@@ -175,10 +180,16 @@ const getDataService = async (data, token) => {
     }
 };
 exports.getDataService = getDataService;
-const editDataService = async (data, token) => {
+const editDataService = async (data, token, isMobile) => {
     const { items, allItemsSelected, newParentId, oldParentId } = data;
     try {
-        const user = await user_schema_1.default.findOne({ token: token });
+        let user;
+        if (isMobile)
+            user = await user_schema_1.default.findOne({ token: token });
+        else
+            user = await user_schema_1.default.findOne({ tokenNonMobile: token });
+        if (user === null)
+            return 400;
         if (!allItemsSelected) {
             let folders = items
                 .filter(f => f.type === folder_content_enum_1.FolderContentEnum.Folder && f.id != newParentId);
@@ -317,10 +328,16 @@ const editDataService = async (data, token) => {
     }
 };
 exports.editDataService = editDataService;
-const deleteDataService = async (data, token) => {
+const deleteDataService = async (data, token, isMobile) => {
     const { items, allItemsSelected, parentId, currentFilter } = data;
     try {
-        const user = await user_schema_1.default.findOne({ token: token });
+        let user;
+        if (isMobile)
+            user = await user_schema_1.default.findOne({ token: token });
+        else
+            user = await user_schema_1.default.findOne({ tokenNonMobile: token });
+        if (user === null)
+            return 400;
         if (!allItemsSelected) {
             let folders = items
                 .filter(f => f.type === folder_content_enum_1.FolderContentEnum.Folder);

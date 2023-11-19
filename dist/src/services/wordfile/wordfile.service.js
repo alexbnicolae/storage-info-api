@@ -7,10 +7,18 @@ exports.deleteWordFileService = exports.editWordFileService = exports.getWordFil
 const mongoose_1 = __importDefault(require("mongoose"));
 const user_schema_1 = __importDefault(require("../../models/Users/user.schema"));
 const wordfile_schema_1 = __importDefault(require("../../models/WordFiles/wordfile.schema"));
-const createWordFileService = async (data, token) => {
+const createWordFileService = async (data, token, isMobile) => {
     let dataContent;
     try {
-        const user = await user_schema_1.default.findOne({ token: token });
+        let user;
+        if (isMobile) {
+            user = await user_schema_1.default.findOne({ token: token });
+        }
+        else {
+            user = await user_schema_1.default.findOne({ tokenNonMobile: token });
+        }
+        if (user === null)
+            return 400;
         if (data.parentId !== null)
             dataContent = Object.assign(Object.assign({}, data), { user: user === null || user === void 0 ? void 0 : user._id, parentId: new mongoose_1.default.Types.ObjectId(data.parentId) });
         else
@@ -24,14 +32,22 @@ const createWordFileService = async (data, token) => {
     }
 };
 exports.createWordFileService = createWordFileService;
-const getWordFileService = async (parentId, token) => {
+const getWordFileService = async (parentId, token, isMobile) => {
     try {
         let parentIdConverted;
         if (parentId !== null)
             parentIdConverted = new mongoose_1.default.Types.ObjectId(parentId);
         else
             parentIdConverted = parentId;
-        const user = await user_schema_1.default.findOne({ token: token });
+        let user;
+        if (isMobile) {
+            user = await user_schema_1.default.findOne({ token: token });
+        }
+        else {
+            user = await user_schema_1.default.findOne({ tokenNonMobile: token });
+        }
+        if (user === null)
+            return 400;
         let content = await wordfile_schema_1.default.find({
             user: user === null || user === void 0 ? void 0 : user._id,
             parentId: parentIdConverted
@@ -43,10 +59,18 @@ const getWordFileService = async (parentId, token) => {
     }
 };
 exports.getWordFileService = getWordFileService;
-const editWordFileService = async (data, token) => {
+const editWordFileService = async (data, token, isMobile) => {
     let dataContent;
     try {
-        const user = await user_schema_1.default.findOne({ token: token });
+        let user;
+        if (isMobile) {
+            user = await user_schema_1.default.findOne({ token: token });
+        }
+        else {
+            user = await user_schema_1.default.findOne({ tokenNonMobile: token });
+        }
+        if (user === null)
+            return 400;
         if (data.parentId !== null)
             dataContent = Object.assign(Object.assign({}, data), { user: user === null || user === void 0 ? void 0 : user._id, parentId: new mongoose_1.default.Types.ObjectId(data.parentId) });
         else

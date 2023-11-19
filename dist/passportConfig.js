@@ -13,7 +13,7 @@ exports.google = {
     clientID: process.env.GMAIL_APP_ID,
     clientSecret: process.env.GMAIL_APP_SECRET,
     //todo: based on env, change url to localhost, dev or prod
-    callbackURL: `https://data-wallet-notes.ro/user/login/google/callback`,
+    callbackURL: `https://0680-86-121-156-244.ngrok-free.app/user/login/google/callback`,
 };
 // export const google: any = {
 //   clientID: process.env.GMAIL_APP_ID,

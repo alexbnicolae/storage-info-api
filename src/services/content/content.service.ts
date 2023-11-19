@@ -5,12 +5,19 @@ import { ContentSchemaDto } from "../../models/content/content.schema.types";
 import Wordfile from "../../models/WordFiles/wordfile.schema";
 import Note from "../../models/Notes/note.schema";
 
-export const createFolderService = async (data: ContentSchemaDto, token: string) => {
+export const createFolderService = async (data: ContentSchemaDto, token: string, isMobile: boolean) => {
     
     let dataContent;
     
     try {
-        const user = await User.findOne({token: token});
+        let user;
+        if(isMobile) {
+            user = await User.findOne({token: token});
+        } else {
+            user = await User.findOne({tokenNonMobile: token});
+        }
+
+        if(user === null) return 400;
 
         if(data.parentId !== null)
             dataContent = {
@@ -33,7 +40,7 @@ export const createFolderService = async (data: ContentSchemaDto, token: string)
     
 }
 
-export const getContentService = async (parentId: any, token: string) => {
+export const getContentService = async (parentId: any, token: string, isMobile: boolean) => {
     try {
         let parentIdConverted;
         
@@ -41,7 +48,12 @@ export const getContentService = async (parentId: any, token: string) => {
             parentIdConverted = new mongoose.Types.ObjectId((parentId as string));
         else parentIdConverted = parentId;
 
-        const user = await User.findOne({token: token});
+        let user;
+        if(isMobile) {
+            user = await User.findOne({token: token});
+        } else {
+            user = await User.findOne({tokenNonMobile: token});
+        }
 
         let content = await Content.find({
             user: user?._id,
@@ -55,11 +67,18 @@ export const getContentService = async (parentId: any, token: string) => {
 }
 
 
-export const editFolderService = async (data: ContentSchemaDto, token: string) => {
+export const editFolderService = async (data: ContentSchemaDto, token: string, isMobile: boolean) => {
     let dataContent;
     
     try {
-        const user = await User.findOne({token: token});
+        let user;
+        if(isMobile) {
+            user = await User.findOne({token: token});
+        } else {
+            user = await User.findOne({tokenNonMobile: token});
+        }
+
+        if(user === null) return 400;
 
         if(data.parentId !== null)
             dataContent = {
@@ -81,10 +100,17 @@ export const editFolderService = async (data: ContentSchemaDto, token: string) =
     }
 }   
 
-export const deleteFolderService = async (folderId: string | undefined, token: string) => {
+export const deleteFolderService = async (folderId: string | undefined, token: string, isMobile: boolean) => {
 
     try {
-        const user = await User.findOne({token: token});
+        let user;
+        if(isMobile) {
+            user = await User.findOne({token: token});
+        } else {
+            user = await User.findOne({tokenNonMobile: token});
+        }
+
+        if(user === null) return 400;
 
         let query = {
             user: user?._id,

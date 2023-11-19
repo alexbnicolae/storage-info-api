@@ -7,11 +7,19 @@ exports.editNoteService = exports.deleteNoteFileService = exports.getNoteService
 const mongoose_1 = __importDefault(require("mongoose"));
 const note_schema_1 = __importDefault(require("../../models/Notes/note.schema"));
 const user_schema_1 = __importDefault(require("../../models/Users/user.schema"));
-const createNoteService = async (data, token) => {
+const createNoteService = async (data, token, isMobile) => {
     let dataContent;
     // debugger;
     try {
-        const user = await user_schema_1.default.findOne({ token: token });
+        let user;
+        if (isMobile) {
+            user = await user_schema_1.default.findOne({ token: token });
+        }
+        else {
+            user = await user_schema_1.default.findOne({ tokenNonMobile: token });
+        }
+        if (user === null)
+            return 400;
         if (data.parentId !== null)
             dataContent = Object.assign(Object.assign({}, data), { user: user === null || user === void 0 ? void 0 : user._id, parentId: new mongoose_1.default.Types.ObjectId(data.parentId) });
         else
@@ -25,14 +33,22 @@ const createNoteService = async (data, token) => {
     }
 };
 exports.createNoteService = createNoteService;
-const getNotesService = async (parentId, token) => {
+const getNotesService = async (parentId, token, isMobile) => {
     try {
         let parentIdConverted;
         if (parentId !== null)
             parentIdConverted = new mongoose_1.default.Types.ObjectId(parentId);
         else
             parentIdConverted = parentId;
-        const user = await user_schema_1.default.findOne({ token: token });
+        let user;
+        if (isMobile) {
+            user = await user_schema_1.default.findOne({ token: token });
+        }
+        else {
+            user = await user_schema_1.default.findOne({ tokenNonMobile: token });
+        }
+        if (user === null)
+            return 400;
         let content = await note_schema_1.default.find({
             user: user === null || user === void 0 ? void 0 : user._id,
             parentId: parentIdConverted
@@ -64,10 +80,18 @@ const deleteNoteFileService = async (noteId) => {
     }
 };
 exports.deleteNoteFileService = deleteNoteFileService;
-const editNoteService = async (data, token) => {
+const editNoteService = async (data, token, isMobile) => {
     let dataContent;
     try {
-        const user = await user_schema_1.default.findOne({ token: token });
+        let user;
+        if (isMobile) {
+            user = await user_schema_1.default.findOne({ token: token });
+        }
+        else {
+            user = await user_schema_1.default.findOne({ tokenNonMobile: token });
+        }
+        if (user === null)
+            return 400;
         if (data.parentId !== null)
             dataContent = Object.assign(Object.assign({}, data), { user: user === null || user === void 0 ? void 0 : user._id, parentId: new mongoose_1.default.Types.ObjectId(data.parentId) });
         else

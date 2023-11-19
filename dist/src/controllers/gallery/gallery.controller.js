@@ -9,8 +9,9 @@ const createGalleryController = async (req, res) => {
     // if(error) return res.json({data: 400});
     //getToken
     let token = await (0, getToken_1.getToken)(req);
+    let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
     // process data
-    let resProcessingData = await (0, gallery_service_1.createGalleryService)(req, token);
+    let resProcessingData = await (0, gallery_service_1.createGalleryService)(req, token, isMobile);
     return res.json({ data: resProcessingData });
 };
 exports.createGalleryController = createGalleryController;

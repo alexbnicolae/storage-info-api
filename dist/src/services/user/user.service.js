@@ -5,9 +5,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.editUserService = exports.getUserService = void 0;
 const user_schema_1 = __importDefault(require("../../models/Users/user.schema"));
-const getUserService = async (token) => {
+const getUserService = async (token, isMobile) => {
     try {
-        const user = await user_schema_1.default.findOne({ token: token });
+        let user;
+        if (isMobile)
+            user = await user_schema_1.default.findOne({ token: token });
+        else
+            user = await user_schema_1.default.findOne({ tokenNonMobile: token });
+        if (user === null)
+            return 400;
         return user;
     }
     catch (error) {
@@ -15,11 +21,21 @@ const getUserService = async (token) => {
     }
 };
 exports.getUserService = getUserService;
-const editUserService = async (data, token) => {
+const editUserService = async (data, token, isMobile) => {
     try {
-        const user = await user_schema_1.default.findOne({ token: token });
-        if (!!user)
-            await user_schema_1.default.findOneAndUpdate({ token: token }, data);
+        let user;
+        if (isMobile)
+            user = await user_schema_1.default.findOne({ token: token });
+        else
+            user = await user_schema_1.default.findOne({ tokenNonMobile: token });
+        if (user === null)
+            return 400;
+        if (!!user) {
+            if (isMobile)
+                await user_schema_1.default.findOneAndUpdate({ token: token }, data);
+            else
+                await user_schema_1.default.findOneAndUpdate({ tokenNonMobile: token }, data);
+        }
         return 200;
     }
     catch (error) {

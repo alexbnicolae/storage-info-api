@@ -10,9 +10,15 @@ const gallery_schema_1 = __importDefault(require("../../models/Gallery/gallery.s
 const note_type_enum_1 = require("../../utils/enums/note-type.enum");
 const __1 = require("../../..");
 const fs_1 = __importDefault(require("fs"));
-const createGalleryService = async (req, token) => {
+const createGalleryService = async (req, token, isMobile) => {
     try {
-        const user = await user_schema_1.default.findOne({ token: token });
+        let user;
+        if (isMobile) {
+            user = await user_schema_1.default.findOne({ token: token });
+        }
+        else {
+            user = await user_schema_1.default.findOne({ tokenNonMobile: token });
+        }
         let returnFiles = [];
         const files = req.files;
         Object.keys(files).forEach(key => {

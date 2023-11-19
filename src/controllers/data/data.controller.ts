@@ -10,8 +10,9 @@ export const getDataController = async (req: Request, res: Response) => {
 
     //getToken
     let token = await getToken(req);
+    let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
     
-    let resProcessingData = await getDataService(req.body, (token as string))
+    let resProcessingData = await getDataService(req.body, (token as string), isMobile)
 
     return res.json({data: resProcessingData})
 }
@@ -24,8 +25,9 @@ export const editDataController = async (req: Request, res: Response) => {
 
     //getToken
     let token = await getToken(req);
+    let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
     
-    let resProcessingData = await editDataService(req.body, (token as string))
+    let resProcessingData = await editDataService(req.body, (token as string), isMobile)
 
     return res.json({data: resProcessingData})
 }
@@ -38,8 +40,9 @@ export const deleteDataController = async (req: Request, res: Response) => {
 
     //getToken
     let token = await getToken(req);
+    let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
 
-    let resProcessingData = await deleteDataService(req.body, (token as string))
+    let resProcessingData = await deleteDataService(req.body, (token as string), isMobile)
 
     return res.json({data: resProcessingData})
 }

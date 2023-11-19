@@ -21,12 +21,12 @@ const fileSizeLimiter = require('./middleware/fileSizeLimiter');
 dotenv_1.default.config();
 const body_parser_1 = __importDefault(require("body-parser"));
 const gallery_1 = __importDefault(require("./src/routes/gallery"));
-// const helmet = require("helmet");
+const helmet = require("helmet");
 const app = (0, express_1.default)();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 app.use(body_parser_1.default.json());
 app.use(express_1.default.static(path_1.default.join(__dirname, 'files')));
-// app.use(helmet());
+app.use(helmet());
 //init passport
 (0, initPassport_1.initPassport)(app);
 // CORS policy

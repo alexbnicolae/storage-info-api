@@ -16,16 +16,22 @@ export type EditModeItemType = {
     type?: FolderContentEnum
 }
 
-export const getDataService = async (data: any, token: string) => {
+export const getDataService = async (data: any, token: string, isMobile: boolean) => {
     
     const { pageIndex, pageSize, parentId, folderContentFilter, searchFilter } = data;
     
     let dataToSkip = pageSize * (pageIndex - 1);
     let dataLengthToReturn = pageSize;
     let returnData: any[] = [];
-    // debugger;
+    
     try {
-        const user = await User.findOne({token: token});
+        let user;
+        if(isMobile)
+            user = await User.findOne({token: token});
+        else    
+            user = await User.findOne({tokenNonMobile: token});
+
+        if(user === null) return 400;
 
         let parentIdConverted;
         
@@ -191,12 +197,18 @@ export const getDataService = async (data: any, token: string) => {
     }
 }  
 
-export const editDataService = async(data: any, token: string) => {
+export const editDataService = async(data: any, token: string, isMobile: boolean) => {
 
     const { items, allItemsSelected, newParentId, oldParentId } = data;
     
     try {
-        const user = await User.findOne({token: token});
+        let user;
+        if(isMobile)
+            user = await User.findOne({token: token});
+        else    
+            user = await User.findOne({tokenNonMobile: token});
+
+        if(user === null) return 400;
 
         if(!allItemsSelected) {
             let folders = (items as EditModeItemType[])
@@ -350,11 +362,17 @@ export const editDataService = async(data: any, token: string) => {
     }
 }
 
-export const deleteDataService = async(data: any, token: string) => {
+export const deleteDataService = async(data: any, token: string, isMobile: boolean) => {
     const { items, allItemsSelected, parentId, currentFilter } = data;
 
     try {
-        const user = await User.findOne({token: token});
+        let user;
+        if(isMobile)
+            user = await User.findOne({token: token});
+        else    
+            user = await User.findOne({tokenNonMobile: token});
+
+        if(user === null) return 400;
 
         if(!allItemsSelected) {
             let folders = (items as EditModeItemType[])

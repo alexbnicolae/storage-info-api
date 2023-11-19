@@ -3,12 +3,19 @@ import User from "../../models/Users/user.schema";
 import Wordfile from "../../models/WordFiles/wordfile.schema";
 import { WordFileSchemaDto } from "../../models/WordFiles/wordfile.schema.types";
 
-export const createWordFileService = async (data: WordFileSchemaDto, token: string) => {
+export const createWordFileService = async (data: WordFileSchemaDto, token: string, isMobile: boolean) => {
     
     let dataContent;
     
     try {
-        const user = await User.findOne({token: token});
+        let user;
+        if(isMobile) {
+            user = await User.findOne({token: token});
+        } else {
+            user = await User.findOne({tokenNonMobile: token});
+        }
+
+        if(user === null) return 400;
 
         if(data.parentId !== null)
             dataContent = {
@@ -31,7 +38,7 @@ export const createWordFileService = async (data: WordFileSchemaDto, token: stri
     
 }
 
-export const getWordFileService = async (parentId: any, token: string) => {
+export const getWordFileService = async (parentId: any, token: string, isMobile: boolean) => {
     try {
         let parentIdConverted;
         
@@ -39,7 +46,14 @@ export const getWordFileService = async (parentId: any, token: string) => {
             parentIdConverted = new mongoose.Types.ObjectId((parentId as string));
         else parentIdConverted = parentId;
 
-        const user = await User.findOne({token: token});
+        let user;
+        if(isMobile) {
+            user = await User.findOne({token: token});
+        } else {
+            user = await User.findOne({tokenNonMobile: token});
+        }
+
+        if(user === null) return 400;
 
         let content = await Wordfile.find({
             user: user?._id,
@@ -52,12 +66,19 @@ export const getWordFileService = async (parentId: any, token: string) => {
     }
 }
 
-export const editWordFileService = async (data: WordFileSchemaDto, token: string) => {
+export const editWordFileService = async (data: WordFileSchemaDto, token: string, isMobile: boolean) => {
     
     let dataContent;
     
     try {
-        const user = await User.findOne({token: token});
+        let user;
+        if(isMobile) {
+            user = await User.findOne({token: token});
+        } else {
+            user = await User.findOne({tokenNonMobile: token});
+        }
+
+        if(user === null) return 400;
 
         if(data.parentId !== null)
             dataContent = {

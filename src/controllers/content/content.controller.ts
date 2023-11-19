@@ -12,9 +12,9 @@ export const createFolderController = async (req: Request, res: Response) => {
 
     //getToken
     let token = await getToken(req);
-    
+    let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
     // process data
-    let resProcessingData = await createFolderService(req.body, (token as string));
+    let resProcessingData = await createFolderService(req.body, (token as string), isMobile);
 
     return res.json({data: resProcessingData})
 }
@@ -22,8 +22,9 @@ export const createFolderController = async (req: Request, res: Response) => {
 export const getContentController = async (req: Request, res: Response) => {
     //getToken
     let token = await getToken(req);
+    let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
 
-    let resProcessingData = await getContentService(req.body.parentId, (token as string))
+    let resProcessingData = await getContentService(req.body.parentId, (token as string), isMobile)
 
     return res.json({data: resProcessingData})
 }
@@ -36,8 +37,9 @@ export const editFolderController = async (req: Request, res: Response) => {
 
     //getToken
     let token = await getToken(req);
+    let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
     
-    let resProcessingData = await editFolderService(req.body, (token as string))
+    let resProcessingData = await editFolderService(req.body, (token as string), isMobile)
 
     return res.json({data: resProcessingData})
 }
@@ -50,8 +52,9 @@ export const deleteFolderController = async (req: Request, res: Response) => {
 
     //getToken
     let token = await getToken(req);
+    let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
     
-    let resProcessingData = await deleteFolderService(req.body.id, (token as string))
+    let resProcessingData = await deleteFolderService(req.body.id, (token as string), isMobile)
 
     return res.json({data: resProcessingData})
 }

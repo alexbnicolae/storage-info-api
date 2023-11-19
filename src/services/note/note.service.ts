@@ -2,12 +2,19 @@ import mongoose from "mongoose";
 import Note from "../../models/Notes/note.schema";
 import User from "../../models/Users/user.schema";
 
-export const createNoteService = async (data: any, token: string) => {
+export const createNoteService = async (data: any, token: string, isMobile: boolean) => {
 
     let dataContent;
     // debugger;
     try {
-        const user = await User.findOne({token: token});
+        let user;
+        if(isMobile) {
+            user = await User.findOne({token: token});
+        } else {
+            user = await User.findOne({tokenNonMobile: token});
+        }
+
+        if(user === null) return 400;
 
         if(data.parentId !== null)
             dataContent = {
@@ -32,7 +39,7 @@ export const createNoteService = async (data: any, token: string) => {
     
 }
 
-export const getNotesService = async (parentId: any, token: string) => {
+export const getNotesService = async (parentId: any, token: string, isMobile: boolean) => {
    
     try {
         let parentIdConverted;
@@ -41,7 +48,14 @@ export const getNotesService = async (parentId: any, token: string) => {
             parentIdConverted = new mongoose.Types.ObjectId((parentId as string));
         else parentIdConverted = parentId;
 
-        const user = await User.findOne({token: token});
+        let user;
+        if(isMobile) {
+            user = await User.findOne({token: token});
+        } else {
+            user = await User.findOne({tokenNonMobile: token});
+        }
+
+        if(user === null) return 400;
 
         let content = await Note.find({
             user: user?._id,
@@ -77,11 +91,18 @@ export const deleteNoteFileService = async (noteId: string | undefined) => {
     }
 }
 
-export const editNoteService = async (data: any, token: string) => {
+export const editNoteService = async (data: any, token: string, isMobile: boolean) => {
     
     let dataContent;
     try {
-        const user = await User.findOne({token: token});
+        let user;
+        if(isMobile) {
+            user = await User.findOne({token: token});
+        } else {
+            user = await User.findOne({tokenNonMobile: token});
+        }
+
+        if(user === null) return 400;
 
         if(data.parentId !== null)
             dataContent = {

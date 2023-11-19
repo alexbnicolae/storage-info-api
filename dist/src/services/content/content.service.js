@@ -9,10 +9,18 @@ const user_schema_1 = __importDefault(require("../../models/Users/user.schema"))
 const content_schema_1 = __importDefault(require("../../models/content/content.schema"));
 const wordfile_schema_1 = __importDefault(require("../../models/WordFiles/wordfile.schema"));
 const note_schema_1 = __importDefault(require("../../models/Notes/note.schema"));
-const createFolderService = async (data, token) => {
+const createFolderService = async (data, token, isMobile) => {
     let dataContent;
     try {
-        const user = await user_schema_1.default.findOne({ token: token });
+        let user;
+        if (isMobile) {
+            user = await user_schema_1.default.findOne({ token: token });
+        }
+        else {
+            user = await user_schema_1.default.findOne({ tokenNonMobile: token });
+        }
+        if (user === null)
+            return 400;
         if (data.parentId !== null)
             dataContent = Object.assign(Object.assign({}, data), { user: user === null || user === void 0 ? void 0 : user._id, parentId: new mongoose_1.default.Types.ObjectId(data.parentId) });
         else
@@ -26,14 +34,20 @@ const createFolderService = async (data, token) => {
     }
 };
 exports.createFolderService = createFolderService;
-const getContentService = async (parentId, token) => {
+const getContentService = async (parentId, token, isMobile) => {
     try {
         let parentIdConverted;
         if (parentId !== null)
             parentIdConverted = new mongoose_1.default.Types.ObjectId(parentId);
         else
             parentIdConverted = parentId;
-        const user = await user_schema_1.default.findOne({ token: token });
+        let user;
+        if (isMobile) {
+            user = await user_schema_1.default.findOne({ token: token });
+        }
+        else {
+            user = await user_schema_1.default.findOne({ tokenNonMobile: token });
+        }
         let content = await content_schema_1.default.find({
             user: user === null || user === void 0 ? void 0 : user._id,
             parentId: parentIdConverted
@@ -45,10 +59,18 @@ const getContentService = async (parentId, token) => {
     }
 };
 exports.getContentService = getContentService;
-const editFolderService = async (data, token) => {
+const editFolderService = async (data, token, isMobile) => {
     let dataContent;
     try {
-        const user = await user_schema_1.default.findOne({ token: token });
+        let user;
+        if (isMobile) {
+            user = await user_schema_1.default.findOne({ token: token });
+        }
+        else {
+            user = await user_schema_1.default.findOne({ tokenNonMobile: token });
+        }
+        if (user === null)
+            return 400;
         if (data.parentId !== null)
             dataContent = Object.assign(Object.assign({}, data), { user: user === null || user === void 0 ? void 0 : user._id, parentId: new mongoose_1.default.Types.ObjectId(data.parentId) });
         else
@@ -62,9 +84,17 @@ const editFolderService = async (data, token) => {
     }
 };
 exports.editFolderService = editFolderService;
-const deleteFolderService = async (folderId, token) => {
+const deleteFolderService = async (folderId, token, isMobile) => {
     try {
-        const user = await user_schema_1.default.findOne({ token: token });
+        let user;
+        if (isMobile) {
+            user = await user_schema_1.default.findOne({ token: token });
+        }
+        else {
+            user = await user_schema_1.default.findOne({ tokenNonMobile: token });
+        }
+        if (user === null)
+            return 400;
         let query = {
             user: user === null || user === void 0 ? void 0 : user._id,
             parentId: folderId

@@ -9,15 +9,17 @@ const createNoteController = async (req, res) => {
     // if(error) return res.json({data: 400});
     //getToken
     let token = await (0, getToken_1.getToken)(req);
+    let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
     // process data
-    let resProcessingData = await (0, note_service_1.createNoteService)(req.body, token);
+    let resProcessingData = await (0, note_service_1.createNoteService)(req.body, token, isMobile);
     return res.json({ data: resProcessingData });
 };
 exports.createNoteController = createNoteController;
 const getNotesController = async (req, res) => {
     //getToken
     let token = await (0, getToken_1.getToken)(req);
-    let resProcessingData = await (0, note_service_1.getNotesService)(req.body.parentId, token);
+    let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
+    let resProcessingData = await (0, note_service_1.getNotesService)(req.body.parentId, token, isMobile);
     return res.json({ data: resProcessingData });
 };
 exports.getNotesController = getNotesController;
@@ -32,7 +34,8 @@ const ediNoteController = async (req, res) => {
     // if(error) return res.json({data: 400});
     //getToken
     let token = await (0, getToken_1.getToken)(req);
-    let resProcessingData = await (0, note_service_1.editNoteService)(req.body, token);
+    let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
+    let resProcessingData = await (0, note_service_1.editNoteService)(req.body, token, isMobile);
     return res.json({ data: resProcessingData });
 };
 exports.ediNoteController = ediNoteController;

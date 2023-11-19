@@ -7,11 +7,25 @@ const userSchema = new Schema(
         name: String,
         email: String,
         externId: String,
-        token: String,
-        validToken: Boolean,
+        token: {
+            type: String,
+            required: false
+        },
+        validToken: {
+            type: Boolean,
+            required: false
+        },
         languageId: Number,
         visualMode: Number,
-        authPlatform: Number
+        authPlatform: Number,
+        tokenNonMobile: {
+            type: String,
+            required: false
+        },
+        validTokenNonMobile: {
+            type: Boolean,
+            required: false
+        }
     },
     { timestamps: true }
 );

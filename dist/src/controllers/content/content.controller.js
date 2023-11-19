@@ -11,15 +11,17 @@ const createFolderController = async (req, res) => {
         return res.json({ data: 400 });
     //getToken
     let token = await (0, getToken_1.getToken)(req);
+    let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
     // process data
-    let resProcessingData = await (0, content_service_1.createFolderService)(req.body, token);
+    let resProcessingData = await (0, content_service_1.createFolderService)(req.body, token, isMobile);
     return res.json({ data: resProcessingData });
 };
 exports.createFolderController = createFolderController;
 const getContentController = async (req, res) => {
     //getToken
     let token = await (0, getToken_1.getToken)(req);
-    let resProcessingData = await (0, content_service_1.getContentService)(req.body.parentId, token);
+    let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
+    let resProcessingData = await (0, content_service_1.getContentService)(req.body.parentId, token, isMobile);
     return res.json({ data: resProcessingData });
 };
 exports.getContentController = getContentController;
@@ -30,7 +32,8 @@ const editFolderController = async (req, res) => {
         return res.json({ data: 400 });
     //getToken
     let token = await (0, getToken_1.getToken)(req);
-    let resProcessingData = await (0, content_service_1.editFolderService)(req.body, token);
+    let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
+    let resProcessingData = await (0, content_service_1.editFolderService)(req.body, token, isMobile);
     return res.json({ data: resProcessingData });
 };
 exports.editFolderController = editFolderController;
@@ -41,7 +44,8 @@ const deleteFolderController = async (req, res) => {
         return res.json({ data: 400 });
     //getToken
     let token = await (0, getToken_1.getToken)(req);
-    let resProcessingData = await (0, content_service_1.deleteFolderService)(req.body.id, token);
+    let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
+    let resProcessingData = await (0, content_service_1.deleteFolderService)(req.body.id, token, isMobile);
     return res.json({ data: resProcessingData });
 };
 exports.deleteFolderController = deleteFolderController;
