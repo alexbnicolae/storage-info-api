@@ -13,6 +13,8 @@ export const createFolderController = async (req: Request, res: Response) => {
     //getToken
     let token = await getToken(req);
     let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
+    if((req.headers["platform"] as string)?.toLowerCase()?.includes("mobile"))
+        isMobile = true;
     // process data
     let resProcessingData = await createFolderService(req.body, (token as string), isMobile);
 
@@ -23,6 +25,8 @@ export const getContentController = async (req: Request, res: Response) => {
     //getToken
     let token = await getToken(req);
     let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
+    if((req.headers["platform"] as string)?.toLowerCase()?.includes("mobile"))
+        isMobile = true;
 
     let resProcessingData = await getContentService(req.body.parentId, (token as string), isMobile)
 
@@ -38,6 +42,8 @@ export const editFolderController = async (req: Request, res: Response) => {
     //getToken
     let token = await getToken(req);
     let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
+    if((req.headers["platform"] as string)?.toLowerCase()?.includes("mobile"))
+        isMobile = true;
     
     let resProcessingData = await editFolderService(req.body, (token as string), isMobile)
 
@@ -53,6 +59,8 @@ export const deleteFolderController = async (req: Request, res: Response) => {
     //getToken
     let token = await getToken(req);
     let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
+    if((req.headers["platform"] as string)?.toLowerCase()?.includes("mobile"))
+        isMobile = true;
     
     let resProcessingData = await deleteFolderService(req.body.id, (token as string), isMobile)
 

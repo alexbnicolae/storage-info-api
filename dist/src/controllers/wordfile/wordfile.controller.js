@@ -5,6 +5,7 @@ const wordfile_validators_1 = require("../../routes/validators/wordfile.validato
 const wordfile_service_1 = require("../../services/wordfile/wordfile.service");
 const getToken_1 = require("../../utils/getToken");
 const createWordFileController = async (req, res) => {
+    var _a, _b;
     // verify if the user sent the data correctly
     const { error, value } = wordfile_validators_1.createWordFileValidator.validate(req.body);
     if (error)
@@ -12,7 +13,7 @@ const createWordFileController = async (req, res) => {
     //getToken
     let token = await (0, getToken_1.getToken)(req);
     let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
-    if (req.headers["platform"].toLowerCase().includes("mobile"))
+    if ((_b = (_a = req.headers["platform"]) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === null || _b === void 0 ? void 0 : _b.includes("mobile"))
         isMobile = true;
     // process data
     let resProcessingData = await (0, wordfile_service_1.createWordFileService)(req.body, token, isMobile);
@@ -20,16 +21,18 @@ const createWordFileController = async (req, res) => {
 };
 exports.createWordFileController = createWordFileController;
 const getWordFileController = async (req, res) => {
+    var _a, _b;
     //getToken
     let token = await (0, getToken_1.getToken)(req);
     let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
-    if (req.headers["platform"].toLowerCase().includes("mobile"))
+    if ((_b = (_a = req.headers["platform"]) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === null || _b === void 0 ? void 0 : _b.includes("mobile"))
         isMobile = true;
     let resProcessingData = await (0, wordfile_service_1.getWordFileService)(req.body.parentId, token, isMobile);
     return res.json({ data: resProcessingData });
 };
 exports.getWordFileController = getWordFileController;
 const editWordFileController = async (req, res) => {
+    var _a, _b;
     // verify if the user sent the data correctly
     const { error, value } = wordfile_validators_1.editWordFileValidator.validate(req.body);
     if (error)
@@ -37,7 +40,7 @@ const editWordFileController = async (req, res) => {
     //getToken
     let token = await (0, getToken_1.getToken)(req);
     let isMobile = req.headers["user-agent"].toLowerCase().includes("mobile");
-    if (req.headers["platform"].toLowerCase().includes("mobile"))
+    if ((_b = (_a = req.headers["platform"]) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === null || _b === void 0 ? void 0 : _b.includes("mobile"))
         isMobile = true;
     let resProcessingData = await (0, wordfile_service_1.editWordFileService)(req.body, token, isMobile);
     return res.json({ data: resProcessingData });

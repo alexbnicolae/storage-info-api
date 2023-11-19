@@ -13,7 +13,7 @@ export const createWordFileController = async (req: Request, res: Response) => {
     //getToken
     let token = await getToken(req);
     let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
-    if((req.headers["platform"] as string).toLowerCase().includes("mobile"))
+    if((req.headers["platform"] as string)?.toLowerCase()?.includes("mobile"))
         isMobile = true;
     // process data
     let resProcessingData = await createWordFileService(req.body, (token as string), isMobile);
@@ -26,7 +26,7 @@ export const getWordFileController = async (req: Request, res: Response) => {
     //getToken
     let token = await getToken(req);
     let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
-    if((req.headers["platform"] as string).toLowerCase().includes("mobile"))
+    if((req.headers["platform"] as string)?.toLowerCase()?.includes("mobile"))
         isMobile = true;
 
     let resProcessingData = await getWordFileService(req.body.parentId, (token as string), isMobile)
@@ -43,7 +43,7 @@ export const editWordFileController = async (req: Request, res: Response) => {
     //getToken
     let token = await getToken(req);
     let isMobile = (req.headers["user-agent"] as string).toLowerCase().includes("mobile");
-    if((req.headers["platform"] as string).toLowerCase().includes("mobile"))
+    if((req.headers["platform"] as string)?.toLowerCase()?.includes("mobile"))
         isMobile = true;
     
     let resProcessingData = await editWordFileService(req.body, (token as string), isMobile)
